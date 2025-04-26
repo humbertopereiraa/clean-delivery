@@ -1,11 +1,7 @@
 import jwt from "jsonwebtoken"
+import { IToken } from "../../domain/contratos/iToken"
 
-export interface Token {
-  gerar: (payload: any, chavePrivada: string, options?: any) => Promise<string>
-  verificar: (token: string, chavePrivada: string, options?: any) => Promise<boolean>
-}
-
-class JwtTokenAdapter implements Token {
+export class JwtTokenAdapter implements IToken {
   gerar(payload: any, chavePrivada: string, options?: any): Promise<string> {
     return new Promise((resolve, reject) => {
       jwt.sign(payload, chavePrivada, options, (erro, token) => {
@@ -26,5 +22,3 @@ class JwtTokenAdapter implements Token {
     })
   }
 }
-
-export const jwtToken = new JwtTokenAdapter()

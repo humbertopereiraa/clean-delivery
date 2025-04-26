@@ -1,8 +1,10 @@
-import { validarEnv } from '../infra/validators/env-validator'
+
 import * as dotenv from "dotenv"
+import ValidarEnv from "../infra/validators/validatorEnv"
 dotenv.config()
 
-const env = validarEnv(process.env)
+const validarEnv = new ValidarEnv()
+const env = validarEnv.execute(process.env)
 
 const Configuracao = {
   production: env.PRODUCTION === 'true',
@@ -15,7 +17,7 @@ const Configuracao = {
   },
   hash: env.BCRYPT_SALT,
   http: {
-    port: parseInt(env.HTTP_PORT ?? '3000')
+    port: parseInt(env.HTTP_PORT)
   },
 }
 export { Configuracao }

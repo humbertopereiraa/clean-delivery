@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt"
-import { Configuracao } from "../main/configuracao"
+import { Configuracao } from "../../main/configuracao"
+import { IEncrypter } from "../../domain/contratos/iEncrypter"
 
 const saltRounds = Configuracao.hash
 
-export class Encrypter {
+export class EncrypterBcryptAdapter implements IEncrypter {
   encryptPassword(password: string): string {
     return bcrypt.hashSync(password, saltRounds)
   }

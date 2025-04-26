@@ -1,4 +1,4 @@
-import HTTP from "../../../infra/http/http"
+import HTTP from "../../../domain/abstracoes/aHttp"
 
 export = (servidor: HTTP) => {
   servidor.on('/info', 'get', () => 'API AUTH SERVICE ATIVO')

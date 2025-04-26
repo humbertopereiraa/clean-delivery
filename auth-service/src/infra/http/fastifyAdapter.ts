@@ -1,15 +1,15 @@
-import HTTP from "./http"
+import HTTP from "../../domain/abstracoes/aHttp"
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify"
 import helmet from '@fastify/helmet'
 import { StatusCode } from "../../utils/statusCode"
-import { jwtToken } from "../../utils/jwtTokenAdapter"
 import { Configuracao } from "../../main/configuracao"
+import { IToken } from "../../domain/contratos/iToken"
 
 export class FastifyAdapter extends HTTP {
 
   public app: FastifyInstance
 
-  constructor() {
+  constructor(private token: IToken) {
     super()
     this.app = fastify()
     this.config()
@@ -37,7 +37,7 @@ export class FastifyAdapter extends HTTP {
       if (!token) {
         return reply.status(StatusCode.UNAUTHORIZED).send({ message: 'Token não fornecido' })
       }
-      const isTokenValid = await jwtToken.verificar(token, Configuracao.token.chave as string)
+      const isTokenValid = await this.token.verificar(token, Configuracao.token.chave as string)
       if (!isTokenValid) {
         return reply.status(StatusCode.UNAUTHORIZED).send({ message: 'Token inválido' })
       }
