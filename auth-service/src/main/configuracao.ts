@@ -19,5 +19,9 @@ const Configuracao = {
   http: {
     port: parseInt(env.HTTP_PORT)
   },
+  banco: {
+    stringConexao: env.DATABASE_URL,
+    max_pool: parseInt(env.DATABASE_MAX_POOL)
+  }
 }
 export { Configuracao }

@@ -10,7 +10,9 @@ export default class ValidarEnv implements IValidatorEnv {
       JWT_SECRET: z.string(),
       JWT_EXPIRES_IN: z.string().default("1d"),
       HTTP_PORT: z.string().default("3000"),
-      BCRYPT_SALT: z.string().default('10')
+      BCRYPT_SALT: z.string().default('10'),
+      DATABASE_URL: z.string(),
+      DATABASE_MAX_POOL: z.string().default('10')
     })
 
     const resultado = schema.safeParse(env)
