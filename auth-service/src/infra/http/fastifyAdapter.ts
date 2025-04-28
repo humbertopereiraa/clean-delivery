@@ -45,6 +45,8 @@ export class FastifyAdapter extends HTTP {
     done()
   }
 
+  //TODO: middleware para tratar erros mapeados (adicionar status code http de acordo com esses erros)
+
   private config(): void {
     this.app.register(helmet) // Middleware Helmet
     this.app.addHook('onRequest', (request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
