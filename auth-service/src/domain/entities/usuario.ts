@@ -10,7 +10,7 @@ export default class Usuario {
   public readonly id: string
   public nome: string
   public readonly email: Email
-  private senha: string
+  private _senha: string
   public readonly cpf: CPF
   public role: Role
   public readonly criadoEm: Date
@@ -19,7 +19,7 @@ export default class Usuario {
     this.id = id ?? uuid.gerar()
     this.nome = nome
     this.email = new Email(email)
-    this.senha = senha
+    this._senha = senha
     this.cpf = new CPF(cpf)
     this.role = role
     this.criadoEm = criadoEm ?? new Date()
@@ -27,8 +27,8 @@ export default class Usuario {
     this.validar()
   }
 
-  public get senhaHash(): string {
-    return this.senha
+  public get senha(): string {
+    return this._senha
   }
 
   private validar(): void {

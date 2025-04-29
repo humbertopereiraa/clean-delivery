@@ -15,7 +15,7 @@ const Configuracao = {
     chave: env.JWT_SECRET,
     tempoExpiracao: env.JWT_EXPIRES_IN
   },
-  hash: env.BCRYPT_SALT,
+  hash: parseInt(env.BCRYPT_SALT),
   http: {
     port: parseInt(env.HTTP_PORT)
   },

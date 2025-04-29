@@ -26,7 +26,7 @@ describe('Usuario', () => {
     expect(usuarioValido.id).toBe('uuid-gerado')
     expect(usuarioValido.nome).toBe('any_nome')
     expect(usuarioValido.email.value).toBe('any_email@email.com')
-    expect(usuarioValido.senhaHash).toBe('any_senha')
+    expect(usuarioValido.senha).toBe('any_senha')
     expect(usuarioValido.cpf.value).toBe('08791159040')
     expect(usuarioValido.role).toBe(Role.CLIENTE)
     expect(usuarioValido.criadoEm).toBeInstanceOf(Date)
