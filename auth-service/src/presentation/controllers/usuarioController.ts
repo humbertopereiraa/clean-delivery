@@ -3,7 +3,7 @@ import { InserirUsuarioOutputDTO } from "../../aplication/dtos/inserirUsuarioOut
 import { IInserirUsuario } from "../../domain/contratos/iInserirUsuario"
 import { Role } from "../../domain/entities/role"
 
-interface inserirUsuario {
+interface IRequestInserirUsuario {
   body: {
     nome: string,
     email: string,
@@ -17,7 +17,7 @@ export class UsuarioController {
 
   constructor(private inserirUsuario: IInserirUsuario) { }
 
-  public inserir(req: inserirUsuario): Promise<InserirUsuarioOutputDTO> {
+  public inserir(req: IRequestInserirUsuario): Promise<InserirUsuarioOutputDTO> {
     return new Promise<InserirUsuarioOutputDTO>(async (resolve, reject) => {
       try {
         const { nome, email, senha, role, cpf } = req.body
