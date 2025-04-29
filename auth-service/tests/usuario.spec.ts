@@ -115,5 +115,29 @@ describe('Usuario', () => {
       }
       expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('CPF inválido.')
     })
+
+    it('Deve lançar um UsuarioError se o email passar de 255 caracteres: ', () => {
+      const newUsuario = {
+        nome: 'any_nome',
+        email: 'any_emailaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@email.com',
+        senha: 'any_senha',
+        cpf: '08791159040',
+        role: Role.ADMIN
+      }
+      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo email deve ter no máximo 255 caracteres.')
+    })
+
+    it('Deve lançar um UsuarioError se o nome passar de 150 caracteres: ', () => {
+      const newUsuario = {
+        nome: 'any_nomeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+        email: 'any_email@email.com',
+        senha: 'any_senha',
+        cpf: '08791159040',
+        role: Role.ADMIN
+      }
+      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo nome deve ter no máximo 150 caracteres.')
+    })
   })
 })
