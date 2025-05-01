@@ -1,5 +1,5 @@
-import { InserirUsuarioInputDTO } from "../../aplication/dtos/inserirUsuarioInputDTO"
-import { InserirUsuarioOutputDTO } from "../../aplication/dtos/inserirUsuarioOutputDTO"
+import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
+import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
 import { IInserirUsuario } from "../../domain/contratos/iInserirUsuario"
 import { Role } from "../../domain/entities/role"
 
@@ -17,11 +17,11 @@ export class UsuarioController {
 
   constructor(private inserirUsuario: IInserirUsuario) { }
 
-  public inserir(req: IRequestInserirUsuario): Promise<InserirUsuarioOutputDTO> {
-    return new Promise<InserirUsuarioOutputDTO>(async (resolve, reject) => {
+  public inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
+    return new Promise<IInserirUsuarioOutputDTO>(async (resolve, reject) => {
       try {
         const { nome, email, senha, role, cpf } = req.body
-        const inserirUsuarioInputDTO: InserirUsuarioInputDTO = {
+        const inserirUsuarioInputDTO: IInserirUsuarioInputDTO = {
           nome,
           email,
           senha,

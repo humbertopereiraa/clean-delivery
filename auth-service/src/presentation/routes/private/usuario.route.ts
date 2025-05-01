@@ -1,6 +1,6 @@
 import { InserirUsuario } from "../../../aplication/usecases/inserirUsuario"
 import HTTP from "../../../domain/abstracoes/aHttp"
-import { EncrypterBcryptAdapter } from "../../../infra/crypto/encrypterBcryptAdapter"
+import EncrypterBcryptAdapter  from "../../../infra/crypto/encrypterBcryptAdapter"
 import { PostgresAdapter } from "../../../infra/database/postgresAdapter"
 import { UsuarioRepository } from "../../../infra/repositories/usuarioRepository"
 import { UsuarioController } from "../../controllers/usuarioController"

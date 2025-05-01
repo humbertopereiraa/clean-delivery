@@ -1,5 +1,5 @@
-import Email from '../src/domain/entities/email'
-import { EmailError } from '../src/domain/errors/emailError'
+import Email from '../../src/domain/entities/email'
+import { EmailError } from '../../src/domain/errors/emailError'
 
 describe('Email', () => {
   it('Deve criar um objeto de e-mail válido com um endereço de e-mail válido: ', () => {

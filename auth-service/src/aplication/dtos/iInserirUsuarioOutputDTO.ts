@@ -1,6 +1,6 @@
 import { Role } from "../../domain/entities/role"
 
-export interface InserirUsuarioOutputDTO {
+export interface IInserirUsuarioOutputDTO {
   id: string
   nome: string
   email: string

@@ -1,5 +1,5 @@
-import CPF from '../src/domain/entities/cpf'
-import { CpfError } from '../src/domain/errors/cpfError'
+import CPF from '../../src/domain/entities/cpf'
+import { CpfError } from '../../src/domain/errors/cpfError'
 
 describe('CPF', () => {
   it('Deve criar um objeto CPF válido com um CPF válido: ', () => {

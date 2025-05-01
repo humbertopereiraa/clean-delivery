@@ -1,9 +1,9 @@
-import Usuario from '../src/domain/entities/usuario'
-import { Role } from '../src/domain/entities/role'
-import { UsuarioError } from '../src/domain/errors/usuarioError'
+import Usuario from '../../src/domain/entities/usuario'
+import { Role } from '../../src/domain/entities/role'
+import { UsuarioError } from '../../src/domain/errors/usuarioError'
 
 // Mock da função uuid.gerar para garantir previsibilidade nos testes
-jest.mock('../src/infra/token/uuid.ts', () => ({
+jest.mock('../../src/infra/token/uuid.ts', () => ({
   uuid: {
     gerar: jest.fn(() => 'uuid-gerado'),
   },

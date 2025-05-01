@@ -1,9 +1,9 @@
 import { z } from "zod"
-import { EnvConfig, IValidatorEnv } from "../../domain/contratos/iValidatorEnv"
+import { IEnvConfig, IValidatorEnv } from "../../domain/contratos/iValidatorEnv"
 
 export default class ValidarEnv implements IValidatorEnv {
 
-  execute(env: NodeJS.ProcessEnv): EnvConfig {
+  execute(env: NodeJS.ProcessEnv): IEnvConfig {
     const schema = z.object({
       PRODUCTION: z.string().optional().default("false"),
       APP_NAME: z.string().default("AuthService"),

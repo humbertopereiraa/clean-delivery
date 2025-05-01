@@ -1,6 +1,6 @@
-import { InserirUsuarioInputDTO } from "../../aplication/dtos/inserirUsuarioInputDTO"
-import { InserirUsuarioOutputDTO } from "../../aplication/dtos/inserirUsuarioOutputDTO"
+import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
+import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
 
 export interface IInserirUsuario {
-  execute(usuario: InserirUsuarioInputDTO): Promise<InserirUsuarioOutputDTO>
+  execute(usuario: IInserirUsuarioInputDTO): Promise<IInserirUsuarioOutputDTO>
 }

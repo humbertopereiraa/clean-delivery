@@ -1,5 +1,5 @@
 
-export interface EnvConfig {
+export interface IEnvConfig {
   PRODUCTION: string
   APP_NAME: string
   JWT_SECRET: string
@@ -11,5 +11,5 @@ export interface EnvConfig {
 }
 
 export interface IValidatorEnv {
-  execute(env: NodeJS.ProcessEnv): EnvConfig
+  execute(env: NodeJS.ProcessEnv): IEnvConfig
 }
