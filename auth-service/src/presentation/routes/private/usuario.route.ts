@@ -1,4 +1,5 @@
 import { AtualizarUsuario } from "../../../aplication/usecases/atualizarUsuario"
+import { DeletarUsuario } from "../../../aplication/usecases/deletarUsuario"
 import InserirUsuario from "../../../aplication/usecases/inserirUsuario"
 import HTTP from "../../../domain/abstracoes/aHttp"
 import EncrypterBcryptAdapter from "../../../infra/crypto/encrypterBcryptAdapter"
@@ -13,9 +14,11 @@ const encrypter = new EncrypterBcryptAdapter()
 const zodValidatorAdapter = new ZodValidatorAdapter()
 const inserirUsuarioUseCase = new InserirUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
 const atualizarUsuarioUseCase = new AtualizarUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
-const usuarioController = new UsuarioController(inserirUsuarioUseCase, atualizarUsuarioUseCase)
+const deletarUsuarioUseCase = new DeletarUsuario(usuarioRepository)
+const usuarioController = new UsuarioController(inserirUsuarioUseCase, atualizarUsuarioUseCase, deletarUsuarioUseCase)
 
 export = (servidor: HTTP) => {
-  servidor.on('/private/usuario', 'post', usuarioController.inserir.bind(usuarioController))
-  servidor.on('/private/usuario', 'put', usuarioController.atualizar.bind(usuarioController))
+  servidor.on('/usuario', 'post', usuarioController.inserir.bind(usuarioController))
+  servidor.on('/usuario', 'put', usuarioController.atualizar.bind(usuarioController))
+  servidor.on('/usuario/:id', 'delete', usuarioController.deletar.bind(usuarioController))
 }

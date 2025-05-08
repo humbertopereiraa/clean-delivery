@@ -3,6 +3,7 @@ import { IAtualizarUsuarioOutputDTO } from "../../aplication/dtos/iAtualizarUsua
 import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
 import { IAtualizarUsuario } from "../../domain/contratos/iAtualizarUsuario"
+import { IDeletarUsuario } from "../../domain/contratos/iDeletarUsuario"
 import { IInserirUsuario } from "../../domain/contratos/iInserirUsuario"
 import { Role } from "../../domain/entities/role"
 
@@ -26,9 +27,15 @@ interface IRequestAtualizarUsuario {
   }
 }
 
+interface IRequestDeletarUsuario {
+  params: {
+    id: string
+  }
+}
+
 export class UsuarioController {
 
-  constructor(private inserirUsuario: IInserirUsuario, private atualizarUsuario: IAtualizarUsuario) { }
+  constructor(private inserirUsuario: IInserirUsuario, private atualizarUsuario: IAtualizarUsuario, private deletarUsuario: IDeletarUsuario) { }
 
   public inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
     return new Promise<IInserirUsuarioOutputDTO>(async (resolve, reject) => {
@@ -64,6 +71,18 @@ export class UsuarioController {
         }
         const output = await this.atualizarUsuario.execute(atualizarUsuarioInputDTO)
         resolve(output)
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  public async deletar(req: IRequestDeletarUsuario): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        const { id } = req.params
+        await this.deletarUsuario.execute(id)
+        resolve()
       } catch (error) {
         reject(error)
       }

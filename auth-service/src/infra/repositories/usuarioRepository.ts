@@ -58,4 +58,13 @@ export class UsuarioRepository implements IUsuarioRepository {
     }
   }
 
+  public deletar(id: string): Promise<void> {
+    try {
+      const sql = 'DELETE FROM auth.users WHERE id = $1'
+      return this.conexao.query(sql, [id])
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error) // TODO: adicionar Logger
+      throw error
+    }
+  }
 }
