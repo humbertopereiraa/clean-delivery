@@ -99,4 +99,8 @@ export default class ZodValidatorAdapter<T = any> implements IValidator<T> {
     if (this.schema instanceof ZodArray) return new ZodValidatorAdapter<T[]>(this.schema.max(length, { message }) as ZodSchema<T[]>)
     throw new Error("O método maxArray só pode ser utilizado em tipos array.")
   }
+
+  optional(): IValidator<T | undefined> {
+    return new ZodValidatorAdapter<T | undefined>(this.schema.optional())
+  }
 }

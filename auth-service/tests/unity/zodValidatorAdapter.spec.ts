@@ -117,4 +117,19 @@ describe("ZodValidatorAdapter", () => {
     }
     expect(() => validator.validate(dadosInvalidos)).toThrow(ValidatorError)
   })
+
+  it("Deve aceitar um campo opcional como undefined: ", () => {
+    const validator = new ZodValidatorAdapter().string().optional()
+    expect(() => validator.validate(undefined)).not.toThrow()
+  })
+
+  it("Deve validar corretamente um valor quando não for undefined: ", () => {
+    const validator = new ZodValidatorAdapter().string().optional()
+    expect(validator.validate("teste")).toBe("teste")
+  })
+
+  it("Deve lançar erro se o valor não for string (mesmo que seja opcional): ", () => {
+    const validator = new ZodValidatorAdapter().string().optional()
+    expect(() => validator.validate(123)).toThrow(ValidatorError)
+  })
 })

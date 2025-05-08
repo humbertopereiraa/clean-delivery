@@ -14,8 +14,9 @@ export default class Usuario {
   public readonly cpf: CPF
   public role: Role
   public readonly criadoEm: Date
+  public readonly atualizadoEm: Date
 
-  constructor(nome: string, email: string, senha: string, cpf: string, role: Role, id?: string, criadoEm?: Date) {
+  constructor(nome: string, email: string, senha: string, cpf: string, role: Role, id?: string, criadoEm?: Date, atualizadoEm?: Date) {
     this.id = id ?? uuid.gerar()
     this.nome = nome
     this.email = new Email(email)
@@ -23,6 +24,7 @@ export default class Usuario {
     this.cpf = new CPF(cpf)
     this.role = role
     this.criadoEm = criadoEm ?? new Date()
+    this.atualizadoEm = atualizadoEm ?? new Date()
 
     this.validar()
   }

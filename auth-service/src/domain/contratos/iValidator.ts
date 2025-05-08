@@ -16,4 +16,5 @@ export interface IValidator<T> {
   array(): IValidator<T[]>
   minArray(length: number, message?: string): IValidator<T[]>
   maxArray(length: number, message?: string): IValidator<T[]>
+  optional(): IValidator<T | undefined>
 }

@@ -1,6 +1,7 @@
+import { AtualizarUsuario } from "../../../aplication/usecases/atualizarUsuario"
 import InserirUsuario from "../../../aplication/usecases/inserirUsuario"
 import HTTP from "../../../domain/abstracoes/aHttp"
-import EncrypterBcryptAdapter  from "../../../infra/crypto/encrypterBcryptAdapter"
+import EncrypterBcryptAdapter from "../../../infra/crypto/encrypterBcryptAdapter"
 import { PostgresAdapter } from "../../../infra/database/postgresAdapter"
 import { UsuarioRepository } from "../../../infra/repositories/usuarioRepository"
 import ZodValidatorAdapter from "../../../infra/validators/zodValidatorAdapter"
@@ -11,8 +12,10 @@ const usuarioRepository = new UsuarioRepository(conexao)
 const encrypter = new EncrypterBcryptAdapter()
 const zodValidatorAdapter = new ZodValidatorAdapter()
 const inserirUsuarioUseCase = new InserirUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
-const usuarioController = new UsuarioController(inserirUsuarioUseCase)
+const atualizarUsuarioUseCase = new AtualizarUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
+const usuarioController = new UsuarioController(inserirUsuarioUseCase, atualizarUsuarioUseCase)
 
 export = (servidor: HTTP) => {
-  servidor.on('/usuario', 'post', usuarioController.inserir.bind(usuarioController))
+  servidor.on('/private/usuario', 'post', usuarioController.inserir.bind(usuarioController))
+  servidor.on('/private/usuario', 'put', usuarioController.atualizar.bind(usuarioController))
 }

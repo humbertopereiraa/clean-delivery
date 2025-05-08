@@ -1,5 +1,8 @@
+import { IAtualizarUsuarioInputDTO } from "../../aplication/dtos/iAtualizarUsuarioInputDTO"
+import { IAtualizarUsuarioOutputDTO } from "../../aplication/dtos/iAtualizarUsuarioOutputDTO"
 import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
+import { IAtualizarUsuario } from "../../domain/contratos/iAtualizarUsuario"
 import { IInserirUsuario } from "../../domain/contratos/iInserirUsuario"
 import { Role } from "../../domain/entities/role"
 
@@ -13,9 +16,19 @@ interface IRequestInserirUsuario {
   }
 }
 
+interface IRequestAtualizarUsuario {
+  body: {
+    id: string,
+    nome?: string,
+    email?: string,
+    senha?: string,
+    cpf?: string,
+  }
+}
+
 export class UsuarioController {
 
-  constructor(private inserirUsuario: IInserirUsuario) { }
+  constructor(private inserirUsuario: IInserirUsuario, private atualizarUsuario: IAtualizarUsuario) { }
 
   public inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
     return new Promise<IInserirUsuarioOutputDTO>(async (resolve, reject) => {
@@ -33,6 +46,25 @@ export class UsuarioController {
         ///TODO: Add -> logger.info(`Usuário inserido com sucesso: ${JSON.stringify(output)}`)
       } catch (error: any) {
         ///TODO: Add -> logger.error(error?.message ? error?.message : `Erro no método inserir na UsuarioController : ${JSON.stringify(error)}`)
+        reject(error)
+      }
+    })
+  }
+
+  public async atualizar(req: IRequestAtualizarUsuario): Promise<IAtualizarUsuarioOutputDTO> {
+    return new Promise<IAtualizarUsuarioOutputDTO>(async (resolve, reject) => {
+      try {
+        const { id, nome, email, senha, cpf } = req.body
+        const atualizarUsuarioInputDTO: IAtualizarUsuarioInputDTO = {
+          id,
+          nome,
+          email,
+          senha,
+          cpf
+        }
+        const output = await this.atualizarUsuario.execute(atualizarUsuarioInputDTO)
+        resolve(output)
+      } catch (error) {
         reject(error)
       }
     })
