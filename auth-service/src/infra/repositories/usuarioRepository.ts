@@ -19,6 +19,19 @@ export class UsuarioRepository implements IUsuarioRepository {
     }
   }
 
+  public async buscarPorEmail(email: string): Promise<Usuario | undefined> {
+    try {
+      const sql = `SELECT * FROM auth.users WHERE email = $1`
+      const { rows } = await this.conexao.query(sql, [email])
+      if (rows.length === 0) return undefined
+      const usuario = rows[0]
+      return new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.cpf, usuario.role, usuario.id, usuario.criadoEm, usuario.atualizadoEm)
+    } catch (error) {
+      console.error("Erro ao buscar usuário por Email:", error) //TODO: adicionar Logger
+      throw error
+    }
+  }
+
   public async inserir(usuario: Usuario): Promise<Usuario> {
     try {
       const { id, nome, email, senha, cpf, role, criadoEm } = usuario

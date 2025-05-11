@@ -1,12 +1,12 @@
-import { AtualizarUsuario } from "../../../aplication/usecases/atualizarUsuario"
-import { DeletarUsuario } from "../../../aplication/usecases/deletarUsuario"
-import InserirUsuario from "../../../aplication/usecases/inserirUsuario"
-import HTTP from "../../../domain/abstracoes/aHttp"
-import EncrypterBcryptAdapter from "../../../infra/crypto/encrypterBcryptAdapter"
-import { PostgresAdapter } from "../../../infra/database/postgresAdapter"
-import { UsuarioRepository } from "../../../infra/repositories/usuarioRepository"
-import ZodValidatorAdapter from "../../../infra/validators/zodValidatorAdapter"
-import { UsuarioController } from "../../controllers/usuarioController"
+import { AtualizarUsuario } from "../../aplication/usecases/atualizarUsuario"
+import { DeletarUsuario } from "../../aplication/usecases/deletarUsuario"
+import InserirUsuario from "../../aplication/usecases/inserirUsuario"
+import HTTP from "../../domain/abstracoes/aHttp"
+import EncrypterBcryptAdapter from "../../infra/crypto/encrypterBcryptAdapter"
+import { PostgresAdapter } from "../../infra/database/postgresAdapter"
+import { UsuarioRepository } from "../../infra/repositories/usuarioRepository"
+import ZodValidatorAdapter from "../../infra/validators/zodValidatorAdapter"
+import { UsuarioController } from "../controllers/usuarioController"
 
 const conexao = PostgresAdapter.getInstance()
 const usuarioRepository = new UsuarioRepository(conexao)
