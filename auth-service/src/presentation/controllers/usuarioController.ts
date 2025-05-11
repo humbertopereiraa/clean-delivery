@@ -37,55 +37,48 @@ export class UsuarioController {
 
   constructor(private inserirUsuario: IInserirUsuario, private atualizarUsuario: IAtualizarUsuario, private deletarUsuario: IDeletarUsuario) { }
 
-  public inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
-    return new Promise<IInserirUsuarioOutputDTO>(async (resolve, reject) => {
-      try {
-        const { nome, email, senha, role, cpf } = req.body
-        const inserirUsuarioInputDTO: IInserirUsuarioInputDTO = {
-          nome,
-          email,
-          senha,
-          role,
-          cpf
-        }
-        const output = await this.inserirUsuario.execute(inserirUsuarioInputDTO)
-        resolve(output)
-        ///TODO: Add -> logger.info(`Usuário inserido com sucesso: ${JSON.stringify(output)}`)
-      } catch (error: any) {
-        ///TODO: Add -> logger.error(error?.message ? error?.message : `Erro no método inserir na UsuarioController : ${JSON.stringify(error)}`)
-        reject(error)
+  public async inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
+    try {
+      const { nome, email, senha, role, cpf } = req.body
+      const inserirUsuarioInputDTO: IInserirUsuarioInputDTO = {
+        nome,
+        email,
+        senha,
+        role,
+        cpf
       }
-    })
+      const output = await this.inserirUsuario.execute(inserirUsuarioInputDTO)
+      return output
+      ///TODO: Add -> logger.info(`Usuário inserido com sucesso: ${JSON.stringify(output)}`)
+    } catch (error: any) {
+      ///TODO: Add -> logger.error(error?.message ? error?.message : `Erro no método inserir na UsuarioController : ${JSON.stringify(error)}`)
+      throw error
+    }
   }
 
   public async atualizar(req: IRequestAtualizarUsuario): Promise<IAtualizarUsuarioOutputDTO> {
-    return new Promise<IAtualizarUsuarioOutputDTO>(async (resolve, reject) => {
-      try {
-        const { id, nome, email, senha, cpf } = req.body
-        const atualizarUsuarioInputDTO: IAtualizarUsuarioInputDTO = {
-          id,
-          nome,
-          email,
-          senha,
-          cpf
-        }
-        const output = await this.atualizarUsuario.execute(atualizarUsuarioInputDTO)
-        resolve(output)
-      } catch (error) {
-        reject(error)
+    try {
+      const { id, nome, email, senha, cpf } = req.body
+      const atualizarUsuarioInputDTO: IAtualizarUsuarioInputDTO = {
+        id,
+        nome,
+        email,
+        senha,
+        cpf
       }
-    })
+      const output = await this.atualizarUsuario.execute(atualizarUsuarioInputDTO)
+      return output
+    } catch (error) {
+      throw error
+    }
   }
 
   public async deletar(req: IRequestDeletarUsuario): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const { id } = req.params
-        await this.deletarUsuario.execute(id)
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
-    })
+    try {
+      const { id } = req.params
+      await this.deletarUsuario.execute(id)
+    } catch (error) {
+      throw error
+    }
   }
 }
