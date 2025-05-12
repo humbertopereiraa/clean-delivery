@@ -1,13 +1,16 @@
 import path from "path"
 import fs from 'fs'
+import { IRouteDocumentationSchema } from "../contratos/iRouteDocumentationSchema"
+import { IRouteDocumentationEngine } from "../contratos/iRouteDocumentationEngine"
+import { IRouteDocumentation } from "../contratos/iRouteDocumentation"
 
-export default abstract class HTTP {
+export default abstract class HttpServer {
 
-  abstract on(url: string, metodo: string, fn: any): any
+  abstract on(url: string, metodo: string, fn: (req: any) => any, routeDocumentationSchema?: IRouteDocumentationSchema): any
   abstract listen(porta: number): void
-  protected abstract authMiddleware(...params: any[]): any
+  abstract configuraDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation): void
 
-  carregarRotas(servidor: HTTP): void {
+  carregarRotas(servidor: HttpServer): void {
     const diretorio = path.join(__dirname, '../../', 'presentation', 'routes')
 
     if (!fs.existsSync(diretorio)) {
@@ -30,12 +33,16 @@ export default abstract class HTTP {
   }
 
   /**Método para registra as rotas no servidor */
-  private addServidorEmRotas(caminhoDoArquivo: string, arquivo: string, servidor: HTTP): void {
-    const includeFn = require(caminhoDoArquivo)
-    if (typeof includeFn !== 'function') {
-      console.error(`O arquivo ${arquivo} não exporta uma função válida.`)
-      return
+  private async addServidorEmRotas(caminhoDoArquivo: string, arquivo: string, servidor: HttpServer): Promise<void> {
+    try {
+      const rotaModulo = await import(caminhoDoArquivo)
+      if (typeof rotaModulo.default !== 'function') {
+        console.error(`O arquivo ${arquivo} não exporta uma função válida.`)
+        return
+      }
+      rotaModulo.default(servidor)
+    } catch (error) {
+      console.error(`Erro ao carregar o arquivo ${arquivo}:`, error)
     }
-    includeFn(servidor)
   }
 }

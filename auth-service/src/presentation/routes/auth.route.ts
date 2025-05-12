@@ -7,6 +7,7 @@ import { JwtTokenAdapter } from "../../infra/token/jwtTokenAdapter"
 import ZodValidatorAdapter from "../../infra/validators/zodValidatorAdapter"
 import { Configuracao } from "../../main/configuracao"
 import { AuthController } from "../controllers/authController"
+import { loginSchema } from "../schemas/login.schema"
 
 const conexao = PostgresAdapter.getInstance()
 const usuarioRepository = new UsuarioRepository(conexao)
@@ -17,5 +18,5 @@ const autenticar = new Autenticar(usuarioRepository, encrypter, token, Configura
 const authController = new AuthController(autenticar)
 
 export = (servidor: HTTP) => {
-  servidor.on('/login', 'post', authController.autenticacao.bind(authController))
+  servidor.on('/login', 'post', authController.autenticacao.bind(authController), loginSchema)
 }

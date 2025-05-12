@@ -1,14 +1,17 @@
+import FastifySwaggerAdapter from "../infra/documentation/fastifySwagger"
+import SwaggerDocumentation from "../infra/documentation/swaggerDocumentation"
 import { FastifyAdapter } from "../infra/http/fastifyAdapter"
-import { JwtTokenAdapter } from "../infra/token/jwtTokenAdapter"
 import { Configuracao } from "./configuracao"
 
 export async function bootstrap() {
 
   //Criar Servidor
-  const jwtTokenAdapter = new JwtTokenAdapter()
-  const servidor = new FastifyAdapter(jwtTokenAdapter)
+  const swaggerDocumentation = new SwaggerDocumentation()
+  const fastifySwaggerAdapter = new FastifySwaggerAdapter()
+  const servidor = new FastifyAdapter()
 
   //Carregar Rotas
+  await servidor.configuraDocumentacaoRotas(fastifySwaggerAdapter, swaggerDocumentation)
   servidor.carregarRotas(servidor)
 
   //Inicializar Servidor

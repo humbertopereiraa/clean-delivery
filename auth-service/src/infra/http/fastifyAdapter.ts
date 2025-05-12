@@ -1,22 +1,29 @@
-import HTTP from "../../domain/abstracoes/aHttp"
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify"
+import HttpServer from "../../domain/abstracoes/aHttp"
+import fastify, { FastifyInstance } from "fastify"
 import helmet from '@fastify/helmet'
 import { StatusCode } from "../../utils/statusCode"
-import { Configuracao } from "../../main/configuracao"
-import { IToken } from "../../domain/contratos/iToken"
+import { IRouteDocumentation } from "../../domain/contratos/iRouteDocumentation"
+import { IRouteDocumentationSchema } from "../../domain/contratos/iRouteDocumentationSchema"
+import { IRouteDocumentationEngine } from "../../domain/contratos/iRouteDocumentationEngine"
 
-export class FastifyAdapter extends HTTP {
+export class FastifyAdapter extends HttpServer {
 
   public app: FastifyInstance
 
-  constructor(private token: IToken) {
+  constructor() {
     super()
-    this.app = fastify()
+    this.app = fastify({
+      ajv: {
+        customOptions: {
+          keywords: ['example']
+        }
+      }
+    })
     this.config()
   }
 
-  on(url: string, metodo: "get" | "post" | "put" | "delete", fn: any) {
-    this.app[metodo](url, async (req: any, reply: any) => {
+  on(url: string, metodo: "get" | "post" | "put" | "delete", fn: (req: any) => any, schema?: IRouteDocumentationSchema) {
+    this.app[metodo](url, { schema: this.mapSchema(schema) }, async (req: any, reply: any) => {
       try {
         const output = await fn(req)
         return reply.code(StatusCode.OK).send(output)
@@ -31,26 +38,27 @@ export class FastifyAdapter extends HTTP {
     console.log(`[Auth Service] Servidor rodando na porta ${porta}`)
   }
 
-  protected async authMiddleware(request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
-    if (request.url.startsWith('/private')) {
-      const token = request.headers['authorization']
-      if (!token) {
-        return reply.status(StatusCode.UNAUTHORIZED).send({ message: 'Token não fornecido' })
-      }
-      const isTokenValid = await this.token.verificar(token, Configuracao.token.chave as string)
-      if (!isTokenValid) {
-        return reply.status(StatusCode.UNAUTHORIZED).send({ message: 'Token inválido' })
-      }
-    }
-    done()
+  async configuraDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation) {
+    await routeDocumentationEngine.registrar(this.app, routeDocumentantion)
   }
 
   //TODO: middleware para tratar erros mapeados (adicionar status code http de acordo com esses erros)
 
-  private config(): void {
+  private async config(): Promise<void> {
     this.app.register(helmet) // Middleware Helmet
-    this.app.addHook('onRequest', (request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
-      this.authMiddleware(request, reply, done)
-    }) // Middleware de autenticação
+  }
+
+  private mapSchema(schema?: IRouteDocumentationSchema): any {
+    if (!schema) return undefined
+    const mapped: any = {}
+    if (schema.body) mapped.body = schema.body
+    if (schema.querystring) mapped.querystring = schema.querystring
+    if (schema.params) mapped.params = schema.params
+    if (schema.headers) mapped.headers = schema.headers
+    if (schema.response) mapped.response = schema.response
+    if (schema.tags) mapped.tags = schema.tags
+    if (schema.summary) mapped.summary = schema.summary
+    if (schema.description) mapped.description = schema.description
+    return mapped
   }
 }

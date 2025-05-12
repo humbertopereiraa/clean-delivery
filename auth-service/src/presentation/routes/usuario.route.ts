@@ -7,6 +7,9 @@ import { PostgresAdapter } from "../../infra/database/postgresAdapter"
 import { UsuarioRepository } from "../../infra/repositories/usuarioRepository"
 import ZodValidatorAdapter from "../../infra/validators/zodValidatorAdapter"
 import { UsuarioController } from "../controllers/usuarioController"
+import { atualizarUsuarioSchema } from "../schemas/atualizarUsuario.schema"
+import { deletarUsuarioSchema } from "../schemas/deletarUsuario.schema"
+import { inserirUsuarioSchema } from "../schemas/inserirUsuario.schema"
 
 const conexao = PostgresAdapter.getInstance()
 const usuarioRepository = new UsuarioRepository(conexao)
@@ -18,7 +21,7 @@ const deletarUsuarioUseCase = new DeletarUsuario(usuarioRepository)
 const usuarioController = new UsuarioController(inserirUsuarioUseCase, atualizarUsuarioUseCase, deletarUsuarioUseCase)
 
 export = (servidor: HTTP) => {
-  servidor.on('/usuario', 'post', usuarioController.inserir.bind(usuarioController))
-  servidor.on('/usuario', 'put', usuarioController.atualizar.bind(usuarioController))
-  servidor.on('/usuario/:id', 'delete', usuarioController.deletar.bind(usuarioController))
+  servidor.on('/usuario', 'post', usuarioController.inserir.bind(usuarioController), inserirUsuarioSchema)
+  servidor.on('/usuario', 'put', usuarioController.atualizar.bind(usuarioController), atualizarUsuarioSchema)
+  servidor.on('/usuario/:id', 'delete', usuarioController.deletar.bind(usuarioController), deletarUsuarioSchema)
 }
