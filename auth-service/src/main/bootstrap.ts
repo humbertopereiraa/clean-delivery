@@ -1,4 +1,4 @@
-import FastifySwaggerAdapter from "../infra/documentation/fastifySwagger"
+import FastifySwaggerAdapter from "../infra/documentation/fastifySwaggerAdapter"
 import SwaggerDocumentation from "../infra/documentation/swaggerDocumentation"
 import { FastifyAdapter } from "../infra/http/fastifyAdapter"
 import { Configuracao } from "./configuracao"
