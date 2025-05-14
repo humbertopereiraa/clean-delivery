@@ -1,10 +1,11 @@
 import { IConexao } from "../../domain/contratos/iConexao"
+import { ILogger } from "../../domain/contratos/iLogger"
 import Usuario from "../../domain/entities/usuario"
 import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
 
 export class UsuarioRepository implements IUsuarioRepository {
 
-  constructor(private conexao: IConexao) { }
+  constructor(private conexao: IConexao, private logger: ILogger) { }
 
   public async buscarPorId(id: string): Promise<Usuario | undefined> {
     try {
@@ -13,8 +14,8 @@ export class UsuarioRepository implements IUsuarioRepository {
       if (rows.length === 0) return undefined
       const usuario = rows[0]
       return new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.cpf, usuario.role, usuario.id, usuario.criadoEm)
-    } catch (error) {
-      console.error("Erro ao buscar usuário por ID:", error) //TODO: adicionar Logger
+    } catch (error: any) {
+      this.logger.error("Erro ao buscar usuário por ID:", error?.stack)
       throw error
     }
   }
@@ -26,8 +27,8 @@ export class UsuarioRepository implements IUsuarioRepository {
       if (rows.length === 0) return undefined
       const usuario = rows[0]
       return new Usuario(usuario.nome, usuario.email, usuario.senha, usuario.cpf, usuario.role, usuario.id, usuario.criadoEm, usuario.atualizadoEm)
-    } catch (error) {
-      console.error("Erro ao buscar usuário por Email:", error) //TODO: adicionar Logger
+    } catch (error: any) {
+      this.logger.error("Erro ao buscar usuário por Email", error?.stack)
       throw error
     }
   }
@@ -40,8 +41,8 @@ export class UsuarioRepository implements IUsuarioRepository {
       const usuarioInserido = output?.rows[0]
 
       return new Usuario(usuarioInserido.nome, usuarioInserido.email, usuarioInserido.senha, usuarioInserido.cpf, usuarioInserido.role, usuarioInserido.id, usuarioInserido.criadoEm)
-    } catch (error) {
-      console.error("Erro ao inserir usuário:", error) //TODO: adicionar Logger
+    } catch (error: any) {
+      this.logger.error("Erro ao inserir usuário", error?.stack)
       throw error
     }
   }
@@ -65,8 +66,8 @@ export class UsuarioRepository implements IUsuarioRepository {
         atualizado.criadoEm,
         atualizado.atualizado_em
       )
-    } catch (error) {
-      console.error("Erro ao atualizar usuário:", error) // TODO: adicionar Logger
+    } catch (error: any) {
+      this.logger.error("Erro ao atualizar usuário", error?.stack)
       throw error
     }
   }
@@ -75,8 +76,8 @@ export class UsuarioRepository implements IUsuarioRepository {
     try {
       const sql = 'DELETE FROM auth.users WHERE id = $1'
       return this.conexao.query(sql, [id])
-    } catch (error) {
-      console.error("Erro ao deletar usuário:", error) // TODO: adicionar Logger
+    } catch (error: any) {
+      this.logger.error("Erro ao deletar usuário", error?.stack)
       throw error
     }
   }

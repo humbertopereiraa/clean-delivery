@@ -1,6 +1,7 @@
 import { IAutenticacaoInputDTO } from "../../aplication/dtos/iAutenticacaoInputDTO"
 import { IAutenticacaoOutputDTO } from "../../aplication/dtos/iAutenticacaoOutputDTO"
 import { IAuthService } from "../../domain/contratos/iAuthService"
+import { ILogger } from "../../domain/contratos/iLogger"
 
 interface IRequestAutenticar {
   body: {
@@ -10,7 +11,7 @@ interface IRequestAutenticar {
 }
 
 export class AuthController {
-  constructor(private authService: IAuthService) { }
+  constructor(private authService: IAuthService, private logger: ILogger) { }
 
   public async autenticacao(req: IRequestAutenticar): Promise<IAutenticacaoOutputDTO> {
     try {
@@ -20,10 +21,10 @@ export class AuthController {
         senha,
       }
       const output = await this.authService.autenticar(input)
-      // TODO: Adicionar log: logger.info(`Usuário logado com sucesso: ${JSON.stringify(output)}`)
+      this.logger.info('Usuário logado com sucesso', output)
       return output
     } catch (error: any) {
-      // TODO: Adicionar log de erro: logger.error(error?.message ? error?.message : `Erro no método logar na AuthController : ${JSON.stringify(error)}`)
+      this.logger.error(error?.message ? error?.message : 'Erro no método logar na AuthController', error?.stack)
       throw error
     }
   }

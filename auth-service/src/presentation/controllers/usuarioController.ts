@@ -2,6 +2,7 @@ import { IAtualizarUsuarioInputDTO } from "../../aplication/dtos/iAtualizarUsuar
 import { IAtualizarUsuarioOutputDTO } from "../../aplication/dtos/iAtualizarUsuarioOutputDTO"
 import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
+import { ILogger } from "../../domain/contratos/iLogger"
 import { IUsuarioService } from "../../domain/contratos/iUsuarioService"
 import { Role } from "../../domain/entities/role"
 
@@ -33,7 +34,7 @@ interface IRequestDeletarUsuario {
 
 export class UsuarioController {
 
-  constructor(private usuarioService: IUsuarioService) { }
+  constructor(private usuarioService: IUsuarioService, private logger: ILogger) { }
 
   public async inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
     try {
@@ -46,10 +47,10 @@ export class UsuarioController {
         cpf
       }
       const output = await this.usuarioService.inserir(inserirUsuarioInputDTO)
+      this.logger.info('Usuário inserido com sucesso', output)
       return output
-      ///TODO: Add -> logger.info(`Usuário inserido com sucesso: ${JSON.stringify(output)}`)
     } catch (error: any) {
-      ///TODO: Add -> logger.error(error?.message ? error?.message : `Erro no método inserir na UsuarioController : ${JSON.stringify(error)}`)
+      this.logger.error(error?.message ? error?.message : 'Erro no método inserir no UsuarioController', error?.stack)
       throw error
     }
   }
@@ -65,8 +66,10 @@ export class UsuarioController {
         cpf
       }
       const output = await this.usuarioService.atualizar(atualizarUsuarioInputDTO)
+      this.logger.info('Usuário atualizado com sucesso', output)
       return output
-    } catch (error) {
+    } catch (error: any) {
+      this.logger.error(error?.message ? error?.message : 'Erro no método atualizar no UsuarioController', error?.stack)
       throw error
     }
   }
@@ -75,7 +78,9 @@ export class UsuarioController {
     try {
       const { id } = req.params
       await this.usuarioService.deletar(id)
-    } catch (error) {
+      this.logger.info('Usuário deletado com sucesso', { id: id })
+    } catch (error: any) {
+      this.logger.error(error?.message ? error?.message : 'Erro no método deletar no UsuarioController', error?.stack)
       throw error
     }
   }
