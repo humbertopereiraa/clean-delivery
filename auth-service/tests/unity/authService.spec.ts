@@ -1,12 +1,13 @@
-import { Role } from '../../src/domain/entities/role'
-import Usuario from '../../src/domain/entities/usuario'
-import { IUsuarioRepository } from '../../src/domain/repositories/iUsuarioRepository'
+import { IAutenticacaoInputDTO } from "../../src/aplication/dtos/iAutenticacaoInputDTO"
 import { IEncrypter } from "../../src/domain/contratos/iEncrypter"
-import { IValidator } from '../../src/domain/contratos/iValidator'
-import { IToken } from '../../src/domain/contratos/iToken'
-import { IAutenticacaoInputDTO } from '../../src/aplication/dtos/iAutenticacaoInputDTO'
-import Autenticar from '../../src/aplication/usecases/autenticar'
-import { AutenticacaoError } from '../../src/domain/errors/autenticacaoError'
+import { IToken } from "../../src/domain/contratos/iToken"
+import { IValidator } from "../../src/domain/contratos/iValidator"
+import { Role } from "../../src/domain/entities/role"
+import Usuario from "../../src/domain/entities/usuario"
+import { IUsuarioRepository } from "../../src/domain/repositories/iUsuarioRepository"
+import { IAuthService } from '../../src/domain/contratos/iAuthService'
+import AuthService from "../../src/aplication/service/authService"
+import { AutenticacaoError } from "../../src/domain/errors/autenticacaoError"
 
 const makeUsuario = (): Usuario => {
   return new Usuario(
@@ -18,7 +19,8 @@ const makeUsuario = (): Usuario => {
   )
 }
 
-describe('Autenticar', () => {
+describe('AuthService', () => {
+  let sut: IAuthService
   let usuarioRepositoryMock: jest.Mocked<IUsuarioRepository>
   let encrypterMock: jest.Mocked<IEncrypter>
   let tokenMock: jest.Mocked<IToken>
@@ -48,6 +50,8 @@ describe('Autenticar', () => {
         }))
       })),
     } as any
+
+    sut = new AuthService(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, validatorMock)
   })
 
   it('Deve autenticar com sucesso: ', async () => {
@@ -60,8 +64,7 @@ describe('Autenticar', () => {
     encrypterMock.comparePassword.mockResolvedValue(true)
     tokenMock.gerar.mockResolvedValue('fake-token')
 
-    const sut = new Autenticar(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, validatorMock)
-    const result = await sut.execute(input)
+    const result = await sut.autenticar(input)
     expect(result).toEqual({
       token: 'fake-token',
       id: usuario.id,
@@ -80,28 +83,25 @@ describe('Autenticar', () => {
     }
     usuarioRepositoryMock.buscarPorEmail.mockResolvedValue(usuario)
     encrypterMock.comparePassword.mockResolvedValue(false)
-
-    const sut = new Autenticar(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, validatorMock)
-    await expect(sut.execute(input)).rejects.toThrow(AutenticacaoError)
+    await expect(sut.autenticar(input)).rejects.toThrow(AutenticacaoError)
   })
 
   it('Deve lançar erro se o validator não for inicializado: ', async () => {
-    const sut = new Autenticar(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, undefined as any)
+    const authService = new AuthService(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, undefined as any)
     const input = {
       email: 'any_email@email.com',
       senha: 'any_senha',
     }
-    await expect(sut.execute(input)).rejects.toThrow('Validator não foi inicializado corretamente.')
+    await expect(authService.autenticar(input)).rejects.toThrow('Validator não foi inicializado corretamente.')
   })
 
   it('Deve lançar erro se o input for inválido: ', async () => {
-    const sut = new Autenticar(usuarioRepositoryMock, encrypterMock, tokenMock, chaveToken, validatorMock)
     const validateMock = jest.fn(() => { throw new Error('Email é obrigatório') })
     validatorMock.object = jest.fn().mockReturnValue({ validate: validateMock })
     const input = {
       email: '',
       senha: 'any_senha',
     }
-    await expect(sut.execute(input)).rejects.toThrow('Email é obrigatório')
+    await expect(sut.autenticar(input)).rejects.toThrow('Email é obrigatório')
   })
 })

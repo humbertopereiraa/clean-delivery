@@ -1,6 +1,6 @@
 import { IAutenticacaoInputDTO } from "../../aplication/dtos/iAutenticacaoInputDTO"
 import { IAutenticacaoOutputDTO } from "../../aplication/dtos/iAutenticacaoOutputDTO"
-import { IAutenticacao } from "../../domain/contratos/iAutenticacao"
+import { IAuthService } from "../../domain/contratos/iAuthService"
 
 interface IRequestAutenticar {
   body: {
@@ -10,7 +10,7 @@ interface IRequestAutenticar {
 }
 
 export class AuthController {
-  constructor(private autenticar: IAutenticacao) { }
+  constructor(private authService: IAuthService) { }
 
   public async autenticacao(req: IRequestAutenticar): Promise<IAutenticacaoOutputDTO> {
     try {
@@ -19,7 +19,7 @@ export class AuthController {
         email,
         senha,
       }
-      const output = await this.autenticar.execute(input)
+      const output = await this.authService.autenticar(input)
       // TODO: Adicionar log: logger.info(`Usuário logado com sucesso: ${JSON.stringify(output)}`)
       return output
     } catch (error: any) {

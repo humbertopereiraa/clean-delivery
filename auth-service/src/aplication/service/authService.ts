@@ -1,4 +1,4 @@
-import { IAutenticacao } from "../../domain/contratos/iAutenticacao"
+import { IAuthService } from "../../domain/contratos/iAuthService"
 import { IEncrypter } from "../../domain/contratos/iEncrypter"
 import { IToken } from "../../domain/contratos/iToken"
 import { IValidator } from "../../domain/contratos/iValidator"
@@ -9,14 +9,14 @@ import { E_AUTENTICACAO_INVALIDA } from "../../shared/constants"
 import { IAutenticacaoInputDTO } from "../dtos/iAutenticacaoInputDTO"
 import { IAutenticacaoOutputDTO } from "../dtos/iAutenticacaoOutputDTO"
 
-export default class Autenticar implements IAutenticacao {
+export default class AuthService implements IAuthService {
 
   constructor(private usuarioRepository: IUsuarioRepository, private encrypter: IEncrypter,
     private tokenProvider: IToken, private chaveToken: string,
     private validator: IValidator<IAutenticacaoInputDTO>) {
   }
 
-  async execute(input: IAutenticacaoInputDTO): Promise<IAutenticacaoOutputDTO> {
+  public async autenticar(input: IAutenticacaoInputDTO): Promise<IAutenticacaoOutputDTO> {
     this.validarInputAutenticacao(input)
     const { email, senha } = input
     const usuario = await this.validarCredenciais(email, senha)
@@ -40,7 +40,6 @@ export default class Autenticar implements IAutenticacao {
     }
     return usuario
   }
-
 
   private validarInputAutenticacao(input: IAutenticacaoInputDTO): void {
     if (!this.validator?.object) {

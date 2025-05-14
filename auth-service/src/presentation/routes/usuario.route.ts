@@ -1,6 +1,4 @@
-import { AtualizarUsuario } from "../../aplication/usecases/atualizarUsuario"
-import { DeletarUsuario } from "../../aplication/usecases/deletarUsuario"
-import InserirUsuario from "../../aplication/usecases/inserirUsuario"
+import UsuarioService from "../../aplication/service/usuarioService"
 import HTTP from "../../domain/abstracoes/aHttp"
 import EncrypterBcryptAdapter from "../../infra/crypto/encrypterBcryptAdapter"
 import { PostgresAdapter } from "../../infra/database/postgresAdapter"
@@ -15,10 +13,8 @@ const conexao = PostgresAdapter.getInstance()
 const usuarioRepository = new UsuarioRepository(conexao)
 const encrypter = new EncrypterBcryptAdapter()
 const zodValidatorAdapter = new ZodValidatorAdapter()
-const inserirUsuarioUseCase = new InserirUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
-const atualizarUsuarioUseCase = new AtualizarUsuario(usuarioRepository, encrypter, zodValidatorAdapter)
-const deletarUsuarioUseCase = new DeletarUsuario(usuarioRepository)
-const usuarioController = new UsuarioController(inserirUsuarioUseCase, atualizarUsuarioUseCase, deletarUsuarioUseCase)
+const usuarioService = new UsuarioService(usuarioRepository, encrypter, zodValidatorAdapter)
+const usuarioController = new UsuarioController(usuarioService)
 
 export = (servidor: HTTP) => {
   servidor.on('/usuario', 'post', usuarioController.inserir.bind(usuarioController), inserirUsuarioSchema)

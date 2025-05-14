@@ -2,9 +2,7 @@ import { IAtualizarUsuarioInputDTO } from "../../aplication/dtos/iAtualizarUsuar
 import { IAtualizarUsuarioOutputDTO } from "../../aplication/dtos/iAtualizarUsuarioOutputDTO"
 import { IInserirUsuarioInputDTO } from "../../aplication/dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../../aplication/dtos/iInserirUsuarioOutputDTO"
-import { IAtualizarUsuario } from "../../domain/contratos/iAtualizarUsuario"
-import { IDeletarUsuario } from "../../domain/contratos/iDeletarUsuario"
-import { IInserirUsuario } from "../../domain/contratos/iInserirUsuario"
+import { IUsuarioService } from "../../domain/contratos/iUsuarioService"
 import { Role } from "../../domain/entities/role"
 
 interface IRequestInserirUsuario {
@@ -35,7 +33,7 @@ interface IRequestDeletarUsuario {
 
 export class UsuarioController {
 
-  constructor(private inserirUsuario: IInserirUsuario, private atualizarUsuario: IAtualizarUsuario, private deletarUsuario: IDeletarUsuario) { }
+  constructor(private usuarioService: IUsuarioService) { }
 
   public async inserir(req: IRequestInserirUsuario): Promise<IInserirUsuarioOutputDTO> {
     try {
@@ -47,7 +45,7 @@ export class UsuarioController {
         role,
         cpf
       }
-      const output = await this.inserirUsuario.execute(inserirUsuarioInputDTO)
+      const output = await this.usuarioService.inserir(inserirUsuarioInputDTO)
       return output
       ///TODO: Add -> logger.info(`Usuário inserido com sucesso: ${JSON.stringify(output)}`)
     } catch (error: any) {
@@ -66,7 +64,7 @@ export class UsuarioController {
         senha,
         cpf
       }
-      const output = await this.atualizarUsuario.execute(atualizarUsuarioInputDTO)
+      const output = await this.usuarioService.atualizar(atualizarUsuarioInputDTO)
       return output
     } catch (error) {
       throw error
@@ -76,7 +74,7 @@ export class UsuarioController {
   public async deletar(req: IRequestDeletarUsuario): Promise<void> {
     try {
       const { id } = req.params
-      await this.deletarUsuario.execute(id)
+      await this.usuarioService.deletar(id)
     } catch (error) {
       throw error
     }
