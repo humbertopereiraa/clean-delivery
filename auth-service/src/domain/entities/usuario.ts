@@ -1,5 +1,5 @@
 import { uuid } from "../../infra/token/uuid"
-import { E_NOME_OBRIGATORIO, E_ROLE_INVALID, E_EMAIL_MAX_CARACTERES, E_NOME_MAX_CARACTERES } from "../../shared/constants"
+import { ErrorDomain } from "../../shared/constants"
 import { UsuarioError } from "../errors/usuarioError"
 import CPF from "./cpf"
 import Email from "./email"
@@ -38,19 +38,19 @@ export default class Usuario {
     const CARACTERES_MAX_NOME = 150
 
     if (typeof this.nome !== 'string' || this.nome.length === 0) {
-      throw new UsuarioError("Nome é obrigatório.", E_NOME_OBRIGATORIO)
+      throw new UsuarioError("Nome é obrigatório.", ErrorDomain.E_NOME_OBRIGATORIO)
     }
 
     if (!Object.values(Role).includes(this.role)) {
-      throw new UsuarioError("Campo role inválido.", E_ROLE_INVALID)
+      throw new UsuarioError("Campo role inválido.", ErrorDomain.E_ROLE_INVALID)
     }
 
     if (this.email.value.length > CARACTERES_MAX_EMAIL) {
-      throw new UsuarioError(`Campo email deve ter no máximo ${CARACTERES_MAX_EMAIL} caracteres.`, E_EMAIL_MAX_CARACTERES)
+      throw new UsuarioError(`Campo email deve ter no máximo ${CARACTERES_MAX_EMAIL} caracteres.`, ErrorDomain.E_EMAIL_MAX_CARACTERES)
     }
 
     if(this.nome?.length > CARACTERES_MAX_NOME) {
-      throw new UsuarioError(`Campo nome deve ter no máximo ${CARACTERES_MAX_NOME} caracteres.`, E_NOME_MAX_CARACTERES)
+      throw new UsuarioError(`Campo nome deve ter no máximo ${CARACTERES_MAX_NOME} caracteres.`, ErrorDomain.E_NOME_MAX_CARACTERES)
     }
   }
 }

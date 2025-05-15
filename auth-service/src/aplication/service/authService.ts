@@ -5,7 +5,7 @@ import { IValidator } from "../../domain/contratos/iValidator"
 import Usuario from "../../domain/entities/usuario"
 import { AutenticacaoError } from "../../domain/errors/autenticacaoError"
 import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
-import { E_AUTENTICACAO_INVALIDA } from "../../shared/constants"
+import { ErrorDomain } from "../../shared/constants"
 import { IAutenticacaoInputDTO } from "../dtos/iAutenticacaoInputDTO"
 import { IAutenticacaoOutputDTO } from "../dtos/iAutenticacaoOutputDTO"
 
@@ -36,7 +36,7 @@ export default class AuthService implements IAuthService {
     const usuario = await this.usuarioRepository.buscarPorEmail(email)
     const senhaValida = usuario && await this.encrypter.comparePassword(senha, usuario.senha)
     if (!senhaValida) {
-      throw new AutenticacaoError("Falha na autenticação. Verifique seu email e senha.", E_AUTENTICACAO_INVALIDA)
+      throw new AutenticacaoError("Falha na autenticação. Verifique seu email e senha.", ErrorDomain.E_AUTENTICACAO_INVALIDA)
     }
     return usuario
   }

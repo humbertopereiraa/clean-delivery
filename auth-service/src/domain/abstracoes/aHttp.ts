@@ -3,12 +3,15 @@ import fs from 'fs'
 import { IRouteDocumentationSchema } from "../contratos/iRouteDocumentationSchema"
 import { IRouteDocumentationEngine } from "../contratos/iRouteDocumentationEngine"
 import { IRouteDocumentation } from "../contratos/iRouteDocumentation"
+import { IDomainErrorStatusResolver } from "../contratos/iDomainErrorStatusResolver"
 
 export default abstract class HttpServer {
 
+  constructor(protected domainErrorStatusResolver: IDomainErrorStatusResolver) { }
+
   abstract on(url: string, metodo: string, fn: (req: any) => any, routeDocumentationSchema?: IRouteDocumentationSchema): any
   abstract listen(porta: number): void
-  abstract configuraDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation): void
+  abstract configurarDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation): void
 
   carregarRotas(servidor: HttpServer): void {
     const diretorio = path.join(__dirname, '../../', 'presentation', 'routes')

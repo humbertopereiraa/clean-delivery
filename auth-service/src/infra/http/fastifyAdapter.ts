@@ -5,13 +5,14 @@ import { StatusCode } from "../../utils/statusCode"
 import { IRouteDocumentation } from "../../domain/contratos/iRouteDocumentation"
 import { IRouteDocumentationSchema } from "../../domain/contratos/iRouteDocumentationSchema"
 import { IRouteDocumentationEngine } from "../../domain/contratos/iRouteDocumentationEngine"
+import { IDomainErrorStatusResolver } from "../../domain/contratos/iDomainErrorStatusResolver"
 
 export class FastifyAdapter extends HttpServer {
 
   public app: FastifyInstance
 
-  constructor() {
-    super()
+  constructor(protected domainErrorStatusResolver: IDomainErrorStatusResolver) {
+    super(domainErrorStatusResolver)
     this.app = fastify({
       ajv: {
         customOptions: {
@@ -27,8 +28,12 @@ export class FastifyAdapter extends HttpServer {
       try {
         const output = await fn(req)
         return reply.code(StatusCode.OK).send(output)
-      } catch (error) {
-        return reply.code(StatusCode.SERVER_ERROR).send(error)
+      } catch (error: any) {
+        const statusCode = this.domainErrorStatusResolver.getStatusCodeHttp(error?.code)
+        return reply.code(statusCode ?? StatusCode.SERVER_ERROR).send({
+          erro: error?.message ?? 'Erro interno no servidor',
+          statusCode: statusCode ?? StatusCode.SERVER_ERROR,
+        })
       }
     })
   }
@@ -38,11 +43,9 @@ export class FastifyAdapter extends HttpServer {
     console.log(`[Auth Service] Servidor rodando na porta ${porta}`)
   }
 
-  async configuraDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation) {
+  async configurarDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation) {
     await routeDocumentationEngine.registrar(this.app, routeDocumentantion)
   }
-
-  //TODO: middleware para tratar erros mapeados (adicionar status code http de acordo com esses erros)
 
   private async config(): Promise<void> {
     this.app.register(helmet) // Middleware Helmet

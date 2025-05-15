@@ -1,4 +1,4 @@
-import { E_EMAIL_INVALIDO } from "../../shared/constants"
+import { ErrorDomain } from "../../shared/constants"
 import { EmailError } from "../errors/emailError"
 
 export default class Email {
@@ -6,7 +6,7 @@ export default class Email {
 
   constructor(value: string) {
     if (!this.isValidEmail(value)) {
-      throw new EmailError('Email inválido.', E_EMAIL_INVALIDO)
+      throw new EmailError('Email inválido.', ErrorDomain.E_EMAIL_INVALIDO)
     }
     this._value = value
   }

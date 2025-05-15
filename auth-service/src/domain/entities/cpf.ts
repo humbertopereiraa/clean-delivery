@@ -1,4 +1,4 @@
-import { E_CPF_INVALIDO } from "../../shared/constants"
+import { ErrorDomain } from "../../shared/constants"
 import { CpfError } from "../errors/cpfError"
 
 export default class CPF {
@@ -7,7 +7,7 @@ export default class CPF {
   constructor(value: string) {
     const cleanedValue = value.replace(/\D/g, '') // Remove caracteres não numéricos
     if (!this.isValidCPF(cleanedValue)) {
-      throw new CpfError('CPF inválido.', E_CPF_INVALIDO)
+      throw new CpfError('CPF inválido.', ErrorDomain.E_CPF_INVALIDO)
     }
     this._value = cleanedValue
   }
