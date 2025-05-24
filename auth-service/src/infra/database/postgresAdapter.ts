@@ -10,7 +10,8 @@ export class PostgresAdapter implements IConexao {
   private constructor() {
     this.pg = new Pool({
       connectionString: Configuracao.banco.stringConexao,
-      max: Configuracao.banco.max_pool
+      max: Configuracao.banco.max_pool,
+      ssl: Configuracao.production
     })
 
     this.pg.on('error', (error: Error,) => {

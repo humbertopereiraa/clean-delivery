@@ -2,6 +2,7 @@ import { IAtualizarUsuarioInputDTO } from '../../src/aplication/dtos/iAtualizarU
 import { IInserirUsuarioInputDTO } from '../../src/aplication/dtos/iInserirUsuarioInputDTO'
 import UsuarioService from '../../src/aplication/service/usuarioService'
 import { IEncrypter } from '../../src/domain/contratos/iEncrypter'
+import { IUuid } from '../../src/domain/contratos/iUuid'
 import { IValidator } from '../../src/domain/contratos/iValidator'
 import { Role } from '../../src/domain/entities/role'
 import Usuario from '../../src/domain/entities/usuario'
@@ -12,6 +13,7 @@ describe('UsuarioService', () => {
   let usuarioRepositoryMock: jest.Mocked<IUsuarioRepository>
   let encrypterMock: jest.Mocked<IEncrypter>
   let validatorMock: jest.Mocked<IValidator<IInserirUsuarioInputDTO | IAtualizarUsuarioInputDTO>>
+  let uuid: jest.Mocked<IUuid>
 
   beforeEach(() => {
     usuarioRepositoryMock = {
@@ -51,7 +53,11 @@ describe('UsuarioService', () => {
       }))
     } as any
 
-    sut = new UsuarioService(usuarioRepositoryMock, encrypterMock, validatorMock)
+    uuid = {
+      gerar: jest.fn()
+    }
+
+    sut = new UsuarioService(usuarioRepositoryMock, encrypterMock, validatorMock, uuid)
   })
 
   describe('InserirUsuario: ', () => {
@@ -65,20 +71,22 @@ describe('UsuarioService', () => {
 
     it('Deve inserir o usuário com sucesso: ', async () => {
       const fakeUsuario = new Usuario(
+        'uuid-gerado',
         input.nome,
         input.email,
         'senha_hash',
         input.cpf,
         input.role
       )
-      Object.assign(fakeUsuario, { id: 'abc123', criadoEm: new Date('2024-01-01') })
+      Object.assign(fakeUsuario, { criadoEm: new Date('2024-01-01') })
 
+      uuid.gerar.mockReturnValue('uuid-gerado')
       usuarioRepositoryMock.inserir.mockResolvedValue(fakeUsuario)
 
       const result = await sut.inserir(input)
 
       expect(result).toEqual({
-        id: 'abc123',
+        id: 'uuid-gerado',
         nome: input.nome,
         email: input.email,
         cpf: input.cpf,
@@ -90,7 +98,7 @@ describe('UsuarioService', () => {
     })
 
     it('Deve lançar erro se validator não estiver inicializado: ', async () => {
-      const sutSemValidator = new UsuarioService(usuarioRepositoryMock, encrypterMock, undefined as any)
+      const sutSemValidator = new UsuarioService(usuarioRepositoryMock, encrypterMock, undefined as any, uuid)
       await expect(() => sutSemValidator.inserir(input)).rejects.toThrow('Validator não foi inicializado corretamente.')
     })
 
@@ -102,13 +110,15 @@ describe('UsuarioService', () => {
 
     it('Deve chamar encryptPassword com a senha correta: ', async () => {
       const fakeUsuario = new Usuario(
+        'uuid-gerado',
         input.nome,
         input.email,
         'senha_hash',
         input.cpf,
         input.role
       )
-      Object.assign(fakeUsuario, { id: 'id', criadoEm: new Date() })
+      uuid.gerar.mockReturnValue('uuid-gerado')
+      Object.assign(fakeUsuario, { criadoEm: new Date() })
       usuarioRepositoryMock.inserir.mockResolvedValue(fakeUsuario)
 
       await sut.inserir(input)
@@ -117,13 +127,15 @@ describe('UsuarioService', () => {
 
     it('Deve chamar usuarioRepository.inserir com instância de Usuario: ', async () => {
       const fakeUsuario = new Usuario(
+        'uuid-gerado',
         input.nome,
         input.email,
         'senha_hash',
         input.cpf,
         input.role
       )
-      Object.assign(fakeUsuario, { id: 'id', criadoEm: new Date() })
+      uuid.gerar.mockReturnValue('uuid-gerado')
+      Object.assign(fakeUsuario, { criadoEm: new Date() })
       usuarioRepositoryMock.inserir.mockResolvedValue(fakeUsuario)
 
       const spy = jest.spyOn(usuarioRepositoryMock, 'inserir')
@@ -134,7 +146,7 @@ describe('UsuarioService', () => {
 
   describe('AtualizarUsuario: ', () => {
     const input: IAtualizarUsuarioInputDTO = {
-      id: 'abc123',
+      id: 'uuid-gerado',
       nome: 'Novo Nome',
       email: 'novo@email.com',
       senha: 'novasenha123',
@@ -142,12 +154,12 @@ describe('UsuarioService', () => {
     }
 
     const usuarioExistente = new Usuario(
+      'uuid-gerado',
       'Antigo Nome',
       'antigo@email.com',
       'senha_antiga',
       '86441440067',
       Role.CLIENTE,
-      'abc123',
       new Date('2024-01-01')
     )
 
@@ -161,7 +173,7 @@ describe('UsuarioService', () => {
       const result = await sut.atualizar(input)
 
       expect(result).toEqual({
-        id: 'abc123',
+        id: 'uuid-gerado',
         nome: 'Novo Nome',
         email: 'novo@email.com',
         cpf: '86441440067',
@@ -173,7 +185,7 @@ describe('UsuarioService', () => {
     })
 
     it('Deve lançar erro se validator não estiver inicializado corretamente: ', async () => {
-      const sutSemValidator = new UsuarioService(usuarioRepositoryMock, encrypterMock, undefined as any)
+      const sutSemValidator = new UsuarioService(usuarioRepositoryMock, encrypterMock, undefined as any, uuid)
       await expect(sutSemValidator.atualizar(input)).rejects.toThrow('Validator não foi inicializado corretamente.')
     })
 

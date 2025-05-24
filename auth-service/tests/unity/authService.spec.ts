@@ -11,6 +11,7 @@ import { AutenticacaoError } from "../../src/domain/errors/autenticacaoError"
 
 const makeUsuario = (): Usuario => {
   return new Usuario(
+    'aaabbbbccccddd',
     'any_nome',
     'any_email@email.com',
     'any_senha_hash',

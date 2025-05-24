@@ -1,8 +1,7 @@
-import { uuid } from "../../infra/token/uuid"
 import { ErrorDomain } from "../../shared/constants"
 import { UsuarioError } from "../errors/usuarioError"
-import CPF from "./cpf"
-import Email from "./email"
+import CPF from "../valueObjects/cpf"
+import Email from "../valueObjects/email"
 import { Role } from "./role"
 
 export default class Usuario {
@@ -16,8 +15,8 @@ export default class Usuario {
   public readonly criadoEm: Date
   public readonly atualizadoEm: Date
 
-  constructor(nome: string, email: string, senha: string, cpf: string, role: Role, id?: string, criadoEm?: Date, atualizadoEm?: Date) {
-    this.id = id ?? uuid.gerar()
+  constructor(id: string, nome: string, email: string, senha: string, cpf: string, role: Role, criadoEm?: Date, atualizadoEm?: Date) {
+    this.id = id
     this.nome = nome
     this.email = new Email(email)
     this._senha = senha

@@ -1,4 +1,4 @@
-import Email from '../../src/domain/entities/email'
+import Email from '../../src/domain/valueObjects/email'
 import { EmailError } from '../../src/domain/errors/emailError'
 
 describe('Email', () => {

@@ -1,5 +1,6 @@
 import { IEncrypter } from "../../domain/contratos/iEncrypter"
 import { IUsuarioService } from "../../domain/contratos/iUsuarioService"
+import { IUuid } from "../../domain/contratos/iUuid"
 import { IValidator } from "../../domain/contratos/iValidator"
 import Usuario from "../../domain/entities/usuario"
 import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
@@ -9,14 +10,15 @@ import { IInserirUsuarioInputDTO } from "../dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../dtos/iInserirUsuarioOutputDTO"
 
 export default class UsuarioService implements IUsuarioService {
-  constructor(private usuarioRepository: IUsuarioRepository, private encrypter: IEncrypter, private validator: IValidator<IInserirUsuarioInputDTO | IAtualizarUsuarioInputDTO>) { }
+  constructor(private usuarioRepository: IUsuarioRepository, private encrypter: IEncrypter, private validator: IValidator<IInserirUsuarioInputDTO | IAtualizarUsuarioInputDTO>, private uuid: IUuid) { }
 
   public async inserir(usuario: IInserirUsuarioInputDTO): Promise<IInserirUsuarioOutputDTO> {
     this.validarInputInserirUsuario(usuario)
 
     const { nome, email, senha, cpf, role } = usuario
     const encryptedPassword = this.encrypter.encryptPassword(senha)
-    const newUsuario = new Usuario(nome, email, encryptedPassword, cpf, role)
+    const newId = this.uuid.gerar()
+    const newUsuario = new Usuario(newId, nome, email, encryptedPassword, cpf, role)
     const usuarioInserido = await this.usuarioRepository.inserir(newUsuario)
     const outputDTO: IInserirUsuarioOutputDTO = {
       id: usuarioInserido.id,
@@ -39,12 +41,12 @@ export default class UsuarioService implements IUsuarioService {
 
     if (input.nome) usuarioExistente.nome = input.nome
     const usuarioAtualizado = new Usuario(
+      usuarioExistente.id,
       input?.nome ?? usuarioExistente.nome,
       input?.email ?? usuarioExistente.email.value,
       input?.senha ? this.encrypter.encryptPassword(input.senha) : usuarioExistente.senha,
       input?.cpf ?? usuarioExistente.cpf.value,
       usuarioExistente.role,
-      usuarioExistente.id,
       usuarioExistente.criadoEm
     )
 

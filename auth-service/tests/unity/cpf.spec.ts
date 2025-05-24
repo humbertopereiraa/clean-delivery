@@ -1,4 +1,4 @@
-import CPF from '../../src/domain/entities/cpf'
+import CPF from '../../src/domain/valueObjects/cpf'
 import { CpfError } from '../../src/domain/errors/cpfError'
 
 describe('CPF', () => {

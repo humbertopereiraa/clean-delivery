@@ -2,18 +2,13 @@ import Usuario from '../../src/domain/entities/usuario'
 import { Role } from '../../src/domain/entities/role'
 import { UsuarioError } from '../../src/domain/errors/usuarioError'
 
-// Mock da função uuid.gerar para garantir previsibilidade nos testes
-jest.mock('../../src/infra/token/uuid.ts', () => ({
-  uuid: {
-    gerar: jest.fn(() => 'uuid-gerado'),
-  },
-}))
 
 describe('Usuario', () => {
   let usuarioValido: Usuario
 
   beforeEach(() => {
     usuarioValido = new Usuario(
+      'uuid-gerado',
       'any_nome',
       'any_email@email.com',
       'any_senha',
@@ -35,6 +30,7 @@ describe('Usuario', () => {
   it('Deve chamar a função validar ao criar um novo Usuario: ', () => {
     const validarSpy = jest.spyOn(Usuario.prototype as any, 'validar')
     new Usuario(
+      'uuid-gerado',
       'any_nome',
       'any_email@email.com',
       'any_senha',
@@ -49,6 +45,7 @@ describe('Usuario', () => {
     it('Não deve lançar erro para um usuário válido: ', () => {
       expect(() => {
         new Usuario(
+          'uuid-gerado',
           'any_nome',
           'any_email@email.com',
           'any_senha',
@@ -60,84 +57,91 @@ describe('Usuario', () => {
 
     it('Deve lançar um UsuarioError se o nome for vazio: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: '',
         email: 'any_email@email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: Role.CLIENTE
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Nome é obrigatório.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Nome é obrigatório.')
     })
 
     it('Deve lançar um UsuarioError se o nome não for uma string: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 123 as any,
         email: 'any_email@email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: Role.CLIENTE
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Nome é obrigatório.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Nome é obrigatório.')
     })
 
     it('Deve lançar um UsuarioError se o role for inválido: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 'any_nome',
         email: 'any_email@email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: 'any_role' as any
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo role inválido.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo role inválido.')
     })
 
     it('Deve lançar um UsuarioError se o email for inválido: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 'any_nome',
         email: 'any_email_email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: Role.ENTREGADOR
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Email inválido.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Email inválido.')
     })
 
     it('Deve lançar um UsuarioError se o CPF for inválido: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 'any_nome',
         email: 'any_email@email.com',
         senha: 'any_senha',
         cpf: '11111111111',
         role: Role.ADMIN
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('CPF inválido.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('CPF inválido.')
     })
 
     it('Deve lançar um UsuarioError se o email passar de 255 caracteres: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 'any_nome',
         email: 'any_emailaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: Role.ADMIN
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo email deve ter no máximo 255 caracteres.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo email deve ter no máximo 255 caracteres.')
     })
 
     it('Deve lançar um UsuarioError se o nome passar de 150 caracteres: ', () => {
       const newUsuario = {
+        id: 'uuid-gerado',
         nome: 'any_nomeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
         email: 'any_email@email.com',
         senha: 'any_senha',
         cpf: '08791159040',
         role: Role.ADMIN
       }
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
-      expect(() => { new Usuario(newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo nome deve ter no máximo 150 caracteres.')
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow(UsuarioError)
+      expect(() => { new Usuario(newUsuario.id, newUsuario.nome, newUsuario.email, newUsuario.senha, newUsuario.cpf, newUsuario.role) }).toThrow('Campo nome deve ter no máximo 150 caracteres.')
     })
   })
 })

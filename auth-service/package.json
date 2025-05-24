@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/main/index.ts",
-    "build": "tsc",
+    "clean": "if exist dist rmdir /s /q dist",
+    "copy": "copy package.json dist && copy .env dist && copy Dockerfile dist",
+    "build": "npm run clean && tsc && npm run copy",
     "start": "node dist/main/index.js",
     "test": "jest"
   },
@@ -31,6 +33,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.0",
     "@types/pg-pool": "^2.0.6",
+    "copy": "^0.3.2",
     "jest": "^29.7.0",
     "swagger-autogen": "^2.23.7",
     "ts-jest": "^29.3.2",
