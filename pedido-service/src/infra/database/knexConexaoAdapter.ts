@@ -47,7 +47,7 @@ export class KnexConexaoAdapter implements IConexao {
       rollback: async (): Promise<void> => {
         await knexTrx.rollback()
       }
-    };
+    }
   }
 
   public async query(sql: string, parametros?: any[]): Promise<any> {

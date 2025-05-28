@@ -24,8 +24,9 @@ export class UnitOfWork implements IUnitOfWork {
     this.limparTransacao()
   }
 
-  public getConnection(): ITransacao | IConexao {
-    return this.trx ?? this.conexao
+  public getConnection(): ITransacao {
+    if (!this.trx) throw new Error("Transação não iniciada. Chame unitOfWork.start() primeiro.")
+    return this.trx
   }
 
   private verificarTransacao(): void {

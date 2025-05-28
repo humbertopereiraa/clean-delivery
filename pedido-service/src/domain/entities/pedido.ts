@@ -41,6 +41,10 @@ export default class Pedido {
   get criadoEm(): Date { return this._criadoEm }
   get atualizadoEm(): Date { return this._atualizadoEm }
 
+  get total(): number {
+    return this.itens.reduce((acc, item) => acc + item.total, 0) + this.valorEntrega
+  }
+
   private validar(): void {
     if (!isNotNullOrEmpty(this._id)) throw new PedidoError('O ID do endereço é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!isNotNullOrEmpty(this._clienteId)) throw new PedidoError('O ID do cliente é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
