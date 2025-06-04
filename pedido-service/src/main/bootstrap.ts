@@ -6,11 +6,11 @@ import { Configuracao } from "./configuracao"
 
 export async function bootstrap() {
   //Criar Servidor
-  const swaggerDocumentation = new SwaggerDocumentation()
   const domainErrorStatusResolver = new DomainErrorStatusResolver()
   const servidor = new ExpressAdapter(domainErrorStatusResolver)
 
   // Configurar documentação ANTES de carregar as rota
+  const swaggerDocumentation = new SwaggerDocumentation()
   const expressSwaggerAdapter = new ExpressSwaggerAdapter()
   await servidor.configurarDocumentacaoRotas(expressSwaggerAdapter, swaggerDocumentation)
 
