@@ -1,8 +1,8 @@
 import { IPedidoRepository } from '../../src/domain/repositories/iPedidoRepository'
 import { IUnitOfWork } from '../../src/domain/contratos/iUnitOfWork'
 import { IUuid } from '../../src/domain/contratos/iUuid'
-import { ICriarPedido } from '../../src/domain/contratos/iCriarPedido'
-import CriarPedido from '../../src/aplication/useCases/criarPedido'
+import { ICriarPedidoUseCase } from '../../src/domain/contratos/iCriarPedidoUseCase'
+import CriarPedidoUseCase from '../../src/aplication/useCases/criarPedidoUseCase'
 import { ICriarPedidoInputDTO } from '../../src/aplication/dtos/iCriarPedidoInputDTO'
 import Pedido from '../../src/domain/entities/pedido'
 import EnderecoEntrega from '../../src/domain/entities/enderecoEntrega'
@@ -14,7 +14,7 @@ describe('CriarPedido', () => {
   let pedidoRepositoryMock: jest.Mocked<IPedidoRepository>
   let unitOfWorkMock: jest.Mocked<IUnitOfWork>
   let uuidMock: jest.Mocked<IUuid>
-  let criarPedido: ICriarPedido
+  let criarPedidoUseCase: ICriarPedidoUseCase
 
   const dto = {
     clienteId: 'cliente-1',
@@ -28,7 +28,7 @@ describe('CriarPedido', () => {
       nomeDestinatario: 'any_nomeDestinatario',
       telefoneDestinatario: '27999999999'
     },
-    itens: [{ pedidoId: 'any_id', nome: 'any_nome', quantidade: 2, preco: 15.50 }],
+    itens: [{ nome: 'any_nome', quantidade: 2, preco: 15.50 }],
     valorEntrega: 5.00
   } as ICriarPedidoInputDTO
 
@@ -48,7 +48,7 @@ describe('CriarPedido', () => {
       gerar: jest.fn().mockReturnValue('any_id')
     }
 
-    criarPedido = new CriarPedido(pedidoRepositoryMock, unitOfWorkMock, uuidMock)
+    criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepositoryMock, unitOfWorkMock, uuidMock)
   })
 
   it('Deve criar e salvar um pedido com sucesso: ', async () => {
@@ -68,7 +68,7 @@ describe('CriarPedido', () => {
 
     pedidoRepositoryMock.salvar.mockResolvedValue(pedidoMock)
 
-    const sut = await criarPedido.execute(dto)
+    const sut = await criarPedidoUseCase.execute(dto)
 
     expect(sut.id).toBe('any_id')
     expect(sut.status).toBe('preparando')
@@ -83,7 +83,7 @@ describe('CriarPedido', () => {
   it('Deve fazer rollback se salvar falhar: ', async () => {
     pedidoRepositoryMock.salvar.mockRejectedValueOnce(new Error('Erro ao salvar'))
 
-    await expect(criarPedido.execute(dto)).rejects.toThrow('Erro ao salvar')
+    await expect(criarPedidoUseCase.execute(dto)).rejects.toThrow('Erro ao salvar')
     expect(unitOfWorkMock.start).toHaveBeenCalled()
     expect(pedidoRepositoryMock.salvar).toHaveBeenCalled()
     expect(unitOfWorkMock.commit).not.toHaveBeenCalled()

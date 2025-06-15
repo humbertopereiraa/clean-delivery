@@ -1,6 +1,6 @@
 import { ICriarPedidoInputDTO } from "../../aplication/dtos/iCriarPedidoInputDTO"
 import { ICriarPedidoOutputDTO } from "../../aplication/dtos/iCriarPedidoOutputDTO"
 
-export interface ICriarPedido {
+export interface ICriarPedidoUseCase {
   execute(input: ICriarPedidoInputDTO): Promise<ICriarPedidoOutputDTO>
 }

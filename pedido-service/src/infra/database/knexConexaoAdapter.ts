@@ -2,26 +2,27 @@ import knex, { Knex } from "knex"
 import { IConexao } from "../../domain/contratos/iConexao"
 import { parse } from "pg-connection-string"
 import { ITransacao } from "../../domain/contratos/iTransacao"
+import { Configuracao } from "../../main/configuracao"
 
 export class KnexConexaoAdapter implements IConexao {
 
   private readonly conexao: Knex
 
-  constructor(config: { connectionString: string, maxPool?: number, ssl?: boolean }) {
-    const conexaoObj = parse(config.connectionString)
+  constructor() {
+    const conexaoObj = parse(Configuracao.banco.stringConexao)
     this.conexao = knex({
       client: "pg",
       connection: {
-        host: conexaoObj.host || "localhost",
+        host: conexaoObj.host as string,
         port: conexaoObj.port ? parseInt(conexaoObj.port) : 5432,
-        user: conexaoObj.user || "postgres",
-        password: conexaoObj.password || "",
-        database: conexaoObj.database || "postgres",
-        ssl: config.ssl,
+        user: conexaoObj.user,
+        password: conexaoObj.password,
+        database: conexaoObj.database as string,
+        ssl: false,
       },
       pool: {
         min: 2,
-        max: config.maxPool || 10
+        max: Configuracao.banco.max_pool || 10
       }
     })
   }

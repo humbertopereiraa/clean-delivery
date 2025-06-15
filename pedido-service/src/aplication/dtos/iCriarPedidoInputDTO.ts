@@ -12,7 +12,6 @@ export interface ICriarPedidoInputDTO {
     telefoneDestinatario: string
   }
   itens: {
-    pedidoId: string
     nome: string
     quantidade: number
     preco: number

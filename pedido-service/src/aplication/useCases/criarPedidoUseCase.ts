@@ -1,4 +1,4 @@
-import { ICriarPedido } from "../../domain/contratos/iCriarPedido"
+import { ICriarPedidoUseCase } from "../../domain/contratos/iCriarPedidoUseCase"
 import { IUnitOfWork } from "../../domain/contratos/iUnitOfWork"
 import { IUuid } from "../../domain/contratos/iUuid"
 import EnderecoEntrega from "../../domain/entities/enderecoEntrega"
@@ -10,7 +10,7 @@ import Telefone from "../../domain/valueOBjects/telefone"
 import { ICriarPedidoInputDTO } from "../dtos/iCriarPedidoInputDTO"
 import { ICriarPedidoOutputDTO } from "../dtos/iCriarPedidoOutputDTO"
 
-export default class CriarPedido implements ICriarPedido {
+export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
 
   constructor(private pedidoRepository: IPedidoRepository, private unitOfWork: IUnitOfWork, private uuid: IUuid) { }
 

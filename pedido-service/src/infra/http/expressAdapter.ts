@@ -62,8 +62,7 @@ export class ExpressAdapter extends HttpServer {
     const pathDoc: any = {
       summary: schema.summary,
       description: schema.description,
-      tags: schema.tags,
-      responses: schema.response,
+      tags: schema.tags
     }
     if (schema.body) {
       pathDoc.requestBody = {
@@ -74,6 +73,32 @@ export class ExpressAdapter extends HttpServer {
         }
       }
     }
+
+    if (schema.response) {
+      pathDoc.responses = {}
+      for (const [statusCode, responseSchema] of Object.entries(schema.response)) {
+        pathDoc.responses[statusCode] = {
+          description: this.getDefaultDescriptionForStatus(statusCode),
+          content: {
+            'application/json': {
+              schema: responseSchema
+            }
+          }
+        }
+      }
+    }
+
     return pathDoc
+  }
+
+  private getDefaultDescriptionForStatus(statusCode: string): string {
+    const map: Record<string, string> = {
+      '200': 'OK',
+      '201': 'Criado com sucesso',
+      '400': 'Requisição inválida',
+      '404': 'Não encontrado',
+      '500': 'Erro interno no servidor'
+    }
+    return map[statusCode] ?? ''
   }
 }

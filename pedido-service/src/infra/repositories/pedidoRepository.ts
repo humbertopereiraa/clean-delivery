@@ -50,10 +50,13 @@ export class PedidoRepository implements IPedidoRepository {
       for (const item of pedido.itens) {
         const sql = `INSERT INTO itens_pedido (id, pedido_id, nome, quantidade, preco) VALUES (?, ?, ?, ?, ?) RETURNING *`
         const [outputItem] = await conexao.query(sql, [item.id, item.pedidoId, item.nome, item.quantidade, item.preco])
-        itensPedido.push(new ItensPedido(outputItem.id, outputItem.pedido_id, outputItem.nome, outputItem.quantidade, outputItem.preco))
+        const quantidade = typeof outputItem.quantidade === 'string' ? parseInt(outputItem.quantidade) : outputItem.quantidade
+        const preco = typeof outputItem.preco === 'string' ? parseFloat(outputItem.preco) : outputItem.preco
+        itensPedido.push(new ItensPedido(outputItem.id, outputItem.pedido_id, outputItem.nome, quantidade, preco))
       }
 
-      const newPedido = new Pedido(outputPedido.id, outputPedido.cliente_id, enderecoEntrega, itensPedido, outputPedido.valor_entrega, outputPedido.status, new Date(outputPedido.criado_em), new Date(outputPedido.atualizado_em))
+      const valorDaEntrega = typeof outputPedido.valor_entrega === 'string' ? parseFloat(outputPedido.valor_entrega) : outputPedido.valor_entrega
+      const newPedido = new Pedido(outputPedido.id, outputPedido.cliente_id, enderecoEntrega, itensPedido, valorDaEntrega, outputPedido.status, new Date(outputPedido.criado_em), new Date(outputPedido.atualizado_em))
       return newPedido
     } catch (error) {
       throw error
