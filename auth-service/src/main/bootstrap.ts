@@ -14,7 +14,7 @@ export async function bootstrap() {
 
   //Carregar Rotas
   await servidor.configurarDocumentacaoRotas(fastifySwaggerAdapter, swaggerDocumentation)
-  servidor.carregarRotas(servidor)
+  await servidor.carregarRotas(servidor)
 
   //Inicializar Servidor
   await servidor.listen(Configuracao.http.port)

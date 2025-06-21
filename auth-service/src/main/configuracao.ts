@@ -22,6 +22,15 @@ const Configuracao = {
   banco: {
     stringConexao: env.DATABASE_URL,
     max_pool: parseInt(env.DATABASE_MAX_POOL)
+  },
+  mensageria: {
+    rabbitmq: {
+      url: env.RABBITMQ_URL,
+      exchangeName: env.RABBITMQ_EXCHANGENAME,
+      exchangeType: env.RABBITMQ_EXCHANGETYPE,
+      queue: env.RABBITMQ_QUEUE,
+      routingKeys: env.RABBITMQ_ROUTING_KEY
+    }
   }
 }
 export { Configuracao }

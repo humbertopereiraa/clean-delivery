@@ -14,7 +14,7 @@ export const inserirUsuarioSchema: IRouteDocumentationSchema = {
   },
 
   response: {
-    201: {
+    200: {
       type: 'object',
       properties: {
         id: { type: 'string', format: 'uuid' },

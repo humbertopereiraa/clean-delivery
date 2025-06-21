@@ -1,5 +1,5 @@
 import path from "path"
-import fs from 'fs'
+import fs from 'fs/promises'
 import { IRouteDocumentationSchema } from "../contratos/iRouteDocumentationSchema"
 import { IRouteDocumentationEngine } from "../contratos/iRouteDocumentationEngine"
 import { IRouteDocumentation } from "../contratos/iRouteDocumentation"
@@ -13,26 +13,27 @@ export default abstract class HttpServer {
   abstract listen(porta: number): void
   abstract configurarDocumentacaoRotas(routeDocumentationEngine: IRouteDocumentationEngine, routeDocumentantion: IRouteDocumentation): void
 
-  carregarRotas(servidor: HttpServer): void {
+  async carregarRotas(servidor: HttpServer): Promise<void> {
     const diretorio = path.join(__dirname, '../../', 'presentation', 'routes')
+    try {
+      const arquivos = await fs.readdir(diretorio)
+      for (const arquivo of arquivos) {
+        const caminho = path.join(diretorio, arquivo)
+        const stats = await fs.stat(caminho)
 
-    if (!fs.existsSync(diretorio)) {
-      console.error(`Diretório de rotas não encontrado: ${diretorio}`)
-      return
-    }
-
-    fs.readdirSync(diretorio).forEach((arquivo) => { // Lê todos os arquivos do diretório de rotas
-      const caminho = path.join(diretorio, arquivo)
-      const pasta = fs.statSync(caminho).isDirectory()
-      if (pasta) { // Se for um diretório, percorre o conteúdo do diretório
-        fs.readdirSync(caminho).forEach((arquivo1) => {
-          const caminhoDoArquivo = path.join(diretorio, arquivo, arquivo1)
-          this.addServidorEmRotas(caminhoDoArquivo, arquivo1, servidor)
-        })
-      } else {    // Se for um arquivo, registra a rota
-        this.addServidorEmRotas(caminho, arquivo, servidor)
+        if (stats.isDirectory()) {
+          const subArquivos = await fs.readdir(caminho)
+          for (const arquivo1 of subArquivos) {
+            const caminhoDoArquivo = path.join(caminho, arquivo1)
+            await this.addServidorEmRotas(caminhoDoArquivo, arquivo1, servidor)
+          }
+        } else {
+          await this.addServidorEmRotas(caminho, arquivo, servidor)
+        }
       }
-    })
+    } catch (error) {
+      console.error(`Erro ao carregar rotas: ${error}`)
+    }
   }
 
   /**Método para registra as rotas no servidor */
@@ -43,7 +44,7 @@ export default abstract class HttpServer {
         console.error(`O arquivo ${arquivo} não exporta uma função válida.`)
         return
       }
-      rotaModulo.default(servidor)
+      await rotaModulo.default(servidor)
     } catch (error) {
       console.error(`Erro ao carregar o arquivo ${arquivo}:`, error)
     }

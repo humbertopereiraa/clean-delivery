@@ -1,4 +1,4 @@
-import AuthService from "../../aplication/service/authService"
+import AuthService from "../../application/service/authService"
 import HTTP from "../../domain/abstracoes/aHttp"
 import EncrypterBcryptAdapter from "../../infra/crypto/encrypterBcryptAdapter"
 import { PostgresAdapter } from "../../infra/database/postgresAdapter"

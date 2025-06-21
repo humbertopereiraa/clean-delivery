@@ -2,6 +2,7 @@ import { IAuthService } from "../../domain/contratos/iAuthService"
 import { IEncrypter } from "../../domain/contratos/iEncrypter"
 import { IToken } from "../../domain/contratos/iToken"
 import { IValidator } from "../../domain/contratos/iValidator"
+import { Role } from "../../domain/entities/role"
 import Usuario from "../../domain/entities/usuario"
 import { AutenticacaoError } from "../../domain/errors/autenticacaoError"
 import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
@@ -28,7 +29,7 @@ export default class AuthService implements IAuthService {
       nome: usuario.nome,
       email: usuario.email.value,
       cpf: usuario.cpf.value,
-      role: usuario.role
+      role: usuario.role as Role
     }
   }
 

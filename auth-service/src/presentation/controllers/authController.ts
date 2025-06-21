@@ -1,5 +1,5 @@
-import { IAutenticacaoInputDTO } from "../../aplication/dtos/iAutenticacaoInputDTO"
-import { IAutenticacaoOutputDTO } from "../../aplication/dtos/iAutenticacaoOutputDTO"
+import { IAutenticacaoInputDTO } from "../../application/dtos/iAutenticacaoInputDTO"
+import { IAutenticacaoOutputDTO } from "../../application/dtos/iAutenticacaoOutputDTO"
 import { IAuthService } from "../../domain/contratos/iAuthService"
 import { ILogger } from "../../domain/contratos/iLogger"
 

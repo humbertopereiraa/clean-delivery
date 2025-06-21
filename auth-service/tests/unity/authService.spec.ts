@@ -1,4 +1,4 @@
-import { IAutenticacaoInputDTO } from "../../src/aplication/dtos/iAutenticacaoInputDTO"
+import { IAutenticacaoInputDTO } from "../../src/application/dtos/iAutenticacaoInputDTO"
 import { IEncrypter } from "../../src/domain/contratos/iEncrypter"
 import { IToken } from "../../src/domain/contratos/iToken"
 import { IValidator } from "../../src/domain/contratos/iValidator"
@@ -6,7 +6,7 @@ import { Role } from "../../src/domain/entities/role"
 import Usuario from "../../src/domain/entities/usuario"
 import { IUsuarioRepository } from "../../src/domain/repositories/iUsuarioRepository"
 import { IAuthService } from '../../src/domain/contratos/iAuthService'
-import AuthService from "../../src/aplication/service/authService"
+import AuthService from "../../src/application/service/authService"
 import { AutenticacaoError } from "../../src/domain/errors/autenticacaoError"
 
 const makeUsuario = (): Usuario => {

@@ -1,8 +1,10 @@
+import { Role } from "../../domain/entities/role"
+
 export interface IAutenticacaoOutputDTO {
   id: string
   nome: string
   email: string
   cpf: string
-  role: 'cliente' | 'entregador' | 'admin'
+  role: Role
   token: string
 }

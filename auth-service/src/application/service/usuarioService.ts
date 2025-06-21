@@ -2,7 +2,10 @@ import { IEncrypter } from "../../domain/contratos/iEncrypter"
 import { IUsuarioService } from "../../domain/contratos/iUsuarioService"
 import { IUuid } from "../../domain/contratos/iUuid"
 import { IValidator } from "../../domain/contratos/iValidator"
+import { Role } from "../../domain/entities/role"
 import Usuario from "../../domain/entities/usuario"
+import { ETipoEvento } from "../../domain/event/iEvento"
+import { IMensageria } from "../../domain/event/iMensageria"
 import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
 import { IAtualizarUsuarioInputDTO } from "../dtos/iAtualizarUsuarioInputDTO"
 import { IAtualizarUsuarioOutputDTO } from "../dtos/iAtualizarUsuarioOutputDTO"
@@ -10,7 +13,7 @@ import { IInserirUsuarioInputDTO } from "../dtos/iInserirUsuarioInputDTO"
 import { IInserirUsuarioOutputDTO } from "../dtos/iInserirUsuarioOutputDTO"
 
 export default class UsuarioService implements IUsuarioService {
-  constructor(private usuarioRepository: IUsuarioRepository, private encrypter: IEncrypter, private validator: IValidator<IInserirUsuarioInputDTO | IAtualizarUsuarioInputDTO>, private uuid: IUuid) { }
+  constructor(private usuarioRepository: IUsuarioRepository, private encrypter: IEncrypter, private validator: IValidator<IInserirUsuarioInputDTO | IAtualizarUsuarioInputDTO>, private uuid: IUuid, private mensageria: IMensageria) { }
 
   public async inserir(usuario: IInserirUsuarioInputDTO): Promise<IInserirUsuarioOutputDTO> {
     this.validarInputInserirUsuario(usuario)
@@ -20,12 +23,15 @@ export default class UsuarioService implements IUsuarioService {
     const newId = this.uuid.gerar()
     const newUsuario = new Usuario(newId, nome, email, encryptedPassword, cpf, role)
     const usuarioInserido = await this.usuarioRepository.inserir(newUsuario)
+
+    await this.publicarEventoUsuario(ETipoEvento.USUARIO_CRIADO, usuarioInserido)
+
     const outputDTO: IInserirUsuarioOutputDTO = {
       id: usuarioInserido.id,
       nome: usuarioInserido.nome,
       email: usuarioInserido.email.value,
       cpf: usuarioInserido.cpf.value,
-      role: usuarioInserido.role,
+      role: usuarioInserido.role as Role,
       criadoEm: usuarioInserido.criadoEm,
     }
     return outputDTO
@@ -46,12 +52,13 @@ export default class UsuarioService implements IUsuarioService {
       input?.email ?? usuarioExistente.email.value,
       input?.senha ? this.encrypter.encryptPassword(input.senha) : usuarioExistente.senha,
       input?.cpf ?? usuarioExistente.cpf.value,
-      usuarioExistente.role,
+      usuarioExistente.role as Role,
       usuarioExistente.criadoEm
     )
 
     const atualizado = await this.usuarioRepository.atualizar(usuarioAtualizado)
 
+    await this.publicarEventoUsuario(ETipoEvento.USUARIO_ATUALIZADO, atualizado)
     return {
       id: atualizado.id,
       nome: atualizado.nome,
@@ -68,6 +75,7 @@ export default class UsuarioService implements IUsuarioService {
       throw new Error("Usuário não encontrado.")
     }
     await this.usuarioRepository.deletar(id)
+    await this.publicarEventoUsuario(ETipoEvento.USUARIO_ATUALIZADO, usuarioExistente)
   }
 
   private validarInputInserirUsuario(usuario: IInserirUsuarioInputDTO): void {
@@ -97,5 +105,17 @@ export default class UsuarioService implements IUsuarioService {
       role: this.validator.string().optional()
     })
     schema.validate(input)
+  }
+
+  private async publicarEventoUsuario(tipoEvento: ETipoEvento, usuario: Usuario): Promise<void> {
+    await this.mensageria.publicar(tipoEvento, {
+      tipo: tipoEvento,
+      payload: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email.value,
+        role: usuario.role
+      }
+    })
   }
 }
