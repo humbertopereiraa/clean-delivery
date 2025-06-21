@@ -4,7 +4,7 @@ import { DomainErrorStatusResolver } from "../infra/http/domainErrorStatusResolv
 import { FastifyAdapter } from "../infra/http/fastifyAdapter"
 import { Configuracao } from "./configuracao"
 
-export async function bootstrap() {
+export async function startServer() {
 
   //Criar Servidor
   const swaggerDocumentation = new SwaggerDocumentation()

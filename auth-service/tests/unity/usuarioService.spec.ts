@@ -228,7 +228,7 @@ describe('UsuarioService', () => {
 
   describe('DeletarUsuario: ', () => {
     it('Deve deletar o usuário se ele existir: ', async () => {
-      usuarioRepositoryMock.buscarPorId.mockResolvedValue({ id: '123', nome: 'Test', email: new Email('novo@email.com'), cpf: new CPF('08791159040') } as Usuario)
+      usuarioRepositoryMock.buscarPorId.mockResolvedValue({ id: '123', nome: 'Test', email: Email.create('novo@email.com'), cpf: CPF.create('08791159040') } as Usuario)
       usuarioRepositoryMock.deletar.mockResolvedValue()
       const result = await sut.deletar('123')
       expect(result).toBeUndefined()

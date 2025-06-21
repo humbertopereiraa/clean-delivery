@@ -4,19 +4,23 @@ import { CpfError } from "../errors/cpfError"
 export default class CPF {
   private readonly _value: string
 
-  constructor(value: string) {
-    const cleanedValue = value.replace(/\D/g, '') // Remove caracteres não numéricos
-    if (!this.isValidCPF(cleanedValue)) {
+  private constructor(value: string) {
+    this._value = value
+  }
+
+  public static create(cpf: string): CPF {
+    const cleanedValue = cpf.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (!CPF.isValidCPF(cleanedValue)) {
       throw new CpfError('CPF inválido.', ErrorDomain.E_CPF_INVALIDO)
     }
-    this._value = cleanedValue
+    return new CPF(cleanedValue)
   }
 
   get value(): string {
     return this._value
   }
 
-  private isValidCPF(cpf: string): boolean {
+  private static isValidCPF(cpf: string): boolean {
 
     if (cpf.length !== 11) return false
 

@@ -4,18 +4,22 @@ import { EmailError } from "../errors/emailError"
 export default class Email {
   private readonly _value: string
 
-  constructor(value: string) {
-    if (!this.isValidEmail(value)) {
+  private constructor(value: string) {
+    this._value = value
+  }
+
+  public static create(email: string): Email {
+    if (!this.isValidEmail(email)) {
       throw new EmailError('Email inválido.', ErrorDomain.E_EMAIL_INVALIDO)
     }
-    this._value = value
+    return new Email(email)
   }
 
   get value(): string {
     return this._value
   }
 
-  private isValidEmail(email: string): boolean {
+  private static isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
 }

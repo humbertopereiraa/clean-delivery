@@ -18,9 +18,9 @@ export default class Usuario {
   constructor(id: string, nome: string, email: string, senha: string, cpf: string, role: Role, criadoEm?: Date, atualizadoEm?: Date) {
     this._id = id
     this._nome = nome
-    this._email = new Email(email)
+    this._email = Email.create(email)
     this._senha = senha
-    this._cpf = new CPF(cpf)
+    this._cpf = CPF.create(cpf)
     this._role = role
     this._criadoEm = criadoEm ?? new Date()
     this._atualizadoEm = atualizadoEm ?? new Date()
