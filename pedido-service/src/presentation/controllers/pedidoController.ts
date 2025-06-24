@@ -1,5 +1,5 @@
-import { ICriarPedidoInputDTO } from "../../aplication/dtos/iCriarPedidoInputDTO"
-import { ICriarPedidoOutputDTO } from "../../aplication/dtos/iCriarPedidoOutputDTO"
+import { ICriarPedidoInputDTO } from "../../application/dtos/iCriarPedidoInputDTO"
+import { ICriarPedidoOutputDTO } from "../../application/dtos/iCriarPedidoOutputDTO"
 import { ICriarPedidoUseCase } from "../../domain/contratos/iCriarPedidoUseCase"
 
 interface IRequestCriarPedido {

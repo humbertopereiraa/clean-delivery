@@ -1,4 +1,4 @@
-import CriarPedidoUseCase from "../../aplication/useCases/criarPedidoUseCase"
+import CriarPedidoUseCase from "../../application/useCases/criarPedidoUseCase"
 import HttpServer from "../../domain/abstracoes/aHttp"
 import { KnexConexaoAdapter } from "../../infra/database/knexConexaoAdapter"
 import { UnitOfWork } from "../../infra/database/unitOfWork"
