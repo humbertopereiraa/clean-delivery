@@ -4,7 +4,7 @@ enum Role {
   ADMIN = 'admin'
 }
 
-enum ETipoEvento {
+export enum ETipoEvento {
   USUARIO_CRIADO = 'usuario.criado',
   USUARIO_ATUALIZADO = 'usuario.atualizado',
   USUARIO_DELETADO = 'usuario.deletado'

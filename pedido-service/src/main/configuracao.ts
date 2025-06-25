@@ -18,6 +18,9 @@ const Configuracao = {
     stringConexao: env.DATABASE_URL,
     max_pool: parseInt(env.DATABASE_MAX_POOL)
   },
+  banco_cache: {
+    url: env.DATABASE_CACHE_URL
+  },
   mensageria: {
     rabbitmq: {
       url: env.RABBITMQ_URL,

@@ -10,7 +10,7 @@ export default class ValidarEnv implements IValidatorEnv {
       HTTP_PORT: z.string().default("3001"),
       DATABASE_URL: z.string(),
       DATABASE_MAX_POOL: z.string().default('10'),
-
+      DATABASE_CACHE_URL: z.string(),
       RABBITMQ_URL: z.string(),
       RABBITMQ_EXCHANGENAME: z.string(),
       RABBITMQ_EXCHANGETYPE: z.string(),
