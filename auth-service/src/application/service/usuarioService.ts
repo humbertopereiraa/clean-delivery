@@ -75,7 +75,7 @@ export default class UsuarioService implements IUsuarioService {
       throw new Error("Usuário não encontrado.")
     }
     await this.usuarioRepository.deletar(id)
-    await this.publicarEventoUsuario(ETipoEvento.USUARIO_ATUALIZADO, usuarioExistente)
+    await this.publicarEventoUsuario(ETipoEvento.USUARIO_DELETADO, usuarioExistente)
   }
 
   private validarInputInserirUsuario(usuario: IInserirUsuarioInputDTO): void {
