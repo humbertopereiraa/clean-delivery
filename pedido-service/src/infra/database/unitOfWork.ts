@@ -2,7 +2,7 @@ import { IUnitOfWork } from "../../domain/contratos/iUnitOfWork"
 import { IConexao } from "../../domain/contratos/iConexao"
 import { ITransacao } from "../../domain/contratos/iTransacao"
 
-export class UnitOfWork implements IUnitOfWork {
+export default class UnitOfWork implements IUnitOfWork {
 
   private trx?: ITransacao
 

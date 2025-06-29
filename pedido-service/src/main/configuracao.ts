@@ -29,6 +29,7 @@ const Configuracao = {
       queue: env.RABBITMQ_QUEUE,
       routingKeys: env.RABBITMQ_ROUTING_KEY
     }
-  }
+  },
+  auth_service_url: env.AUTH_SERVICE_URL
 }
 export { Configuracao }

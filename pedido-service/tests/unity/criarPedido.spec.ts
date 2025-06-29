@@ -9,11 +9,14 @@ import EnderecoEntrega from '../../src/domain/entities/enderecoEntrega'
 import CEP from '../../src/domain/valueOBjects/cep'
 import Telefone from '../../src/domain/valueOBjects/telefone'
 import ItensPedido from '../../src/domain/entities/itensPedido'
+import { IUsuarioRepository } from '../../src/domain/repositories/iUsuarioRepository'
+import { Role, Usuario } from '../../src/domain/entities/usuario'
 
 describe('CriarPedido', () => {
   let pedidoRepositoryMock: jest.Mocked<IPedidoRepository>
   let unitOfWorkMock: jest.Mocked<IUnitOfWork>
   let uuidMock: jest.Mocked<IUuid>
+  let usuarioRepositoryMock: jest.Mocked<IUsuarioRepository>
   let criarPedidoUseCase: ICriarPedidoUseCase
 
   const dto = {
@@ -48,7 +51,14 @@ describe('CriarPedido', () => {
       gerar: jest.fn().mockReturnValue('any_id')
     }
 
-    criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepositoryMock, unitOfWorkMock, uuidMock)
+    usuarioRepositoryMock = {
+      obterPorId: jest.fn(),
+      salvar: jest.fn(),
+      atualizar: jest.fn(),
+      deletar: jest.fn()
+    } 
+
+    criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepositoryMock, unitOfWorkMock, uuidMock, usuarioRepositoryMock)
   })
 
   it('Deve criar e salvar um pedido com sucesso: ', async () => {
@@ -66,13 +76,14 @@ describe('CriarPedido', () => {
     const itensPedidoMock = [new ItensPedido('any_id', 'any_id', dto.itens[0].nome, dto.itens[0].quantidade, dto.itens[0].preco)]
     const pedidoMock = new Pedido('any_id', 'cliente-1', enderecoMock, itensPedidoMock, dto.valorEntrega, 'preparando')
 
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario('cliente-1', 'Teste', 'any@email.com', Role.CLIENTE))
     pedidoRepositoryMock.salvar.mockResolvedValue(pedidoMock)
 
     const sut = await criarPedidoUseCase.execute(dto)
 
     expect(sut.id).toBe('any_id')
     expect(sut.status).toBe('preparando')
-    expect(sut.total).toBe(36)
+    expect(sut.total).toBe('36.00')
 
     expect(unitOfWorkMock.start).toHaveBeenCalled()
     expect(pedidoRepositoryMock.salvar).toHaveBeenCalled()
@@ -81,6 +92,7 @@ describe('CriarPedido', () => {
   })
 
   it('Deve fazer rollback se salvar falhar: ', async () => {
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario('cliente-1', 'Teste', 'any@email.com', Role.CLIENTE))
     pedidoRepositoryMock.salvar.mockRejectedValueOnce(new Error('Erro ao salvar'))
 
     await expect(criarPedidoUseCase.execute(dto)).rejects.toThrow('Erro ao salvar')

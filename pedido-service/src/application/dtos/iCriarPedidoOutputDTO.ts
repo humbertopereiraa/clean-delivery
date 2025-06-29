@@ -1,6 +1,6 @@
 export interface ICriarPedidoOutputDTO {
   id: string
-  total: number
+  total: string
   status: string
   criadoEm: string
   enderecoEntrega: {
@@ -20,6 +20,6 @@ export interface ICriarPedidoOutputDTO {
     pedidoId: string
     nome: string
     quantidade: number
-    preco: number
+    preco: string
   }[]
 }

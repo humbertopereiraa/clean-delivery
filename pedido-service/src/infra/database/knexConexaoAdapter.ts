@@ -4,7 +4,7 @@ import { parse } from "pg-connection-string"
 import { ITransacao } from "../../domain/contratos/iTransacao"
 import { Configuracao } from "../../main/configuracao"
 
-export class KnexConexaoAdapter implements IConexao {
+export default class KnexConexaoAdapter implements IConexao {
 
   private readonly conexao: Knex
 

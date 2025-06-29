@@ -16,6 +16,7 @@ export default class ValidarEnv implements IValidatorEnv {
       RABBITMQ_EXCHANGETYPE: z.string(),
       RABBITMQ_QUEUE: z.string(),
       RABBITMQ_ROUTING_KEY: z.string(),
+      AUTH_SERVICE_URL: z.string()
     })
 
     const resultado = schema.safeParse(env)

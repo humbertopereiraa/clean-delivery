@@ -5,6 +5,7 @@ import EnderecoEntrega from "../../domain/entities/enderecoEntrega"
 import ItensPedido from "../../domain/entities/itensPedido"
 import Pedido from "../../domain/entities/pedido"
 import { IPedidoRepository } from "../../domain/repositories/iPedidoRepository"
+import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
 import CEP from "../../domain/valueOBjects/cep"
 import Telefone from "../../domain/valueOBjects/telefone"
 import { ICriarPedidoInputDTO } from "../dtos/iCriarPedidoInputDTO"
@@ -12,7 +13,7 @@ import { ICriarPedidoOutputDTO } from "../dtos/iCriarPedidoOutputDTO"
 
 export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
 
-  constructor(private pedidoRepository: IPedidoRepository, private unitOfWork: IUnitOfWork, private uuid: IUuid) { }
+  constructor(private pedidoRepository: IPedidoRepository, private unitOfWork: IUnitOfWork, private uuid: IUuid, private usuarioRepository: IUsuarioRepository) { }
 
   async execute(input: ICriarPedidoInputDTO): Promise<ICriarPedidoOutputDTO> {
     try {
@@ -21,7 +22,10 @@ export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
 
       const { endereco, itens, clienteId, valorEntrega } = input
 
-      //TODO: Consultar no cache de usuários, se código clienteId é válido
+      const usuario = await this.usuarioRepository.obterPorId(clienteId)
+      if (!usuario) {
+        throw new Error('Usuário não encontrado.')
+      }
 
       //TODO: Adicionar validações no input
 
@@ -47,7 +51,7 @@ export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
 
       return {
         id: pedidoId,
-        total: output.total,
+        total: output.total.toFixed(2),
         status: output.status,
         criadoEm: output.criadoEm.toISOString(),
         enderecoEntrega: {
@@ -68,7 +72,7 @@ export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
             pedidoId: item.pedidoId,
             nome: item.nome,
             quantidade: item.quantidade,
-            preco: item.preco
+            preco: item.preco.toFixed(2)
           }
         })
       }

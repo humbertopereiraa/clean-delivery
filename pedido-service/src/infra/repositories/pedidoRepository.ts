@@ -6,7 +6,7 @@ import { IPedidoRepository } from "../../domain/repositories/iPedidoRepository"
 import CEP from "../../domain/valueOBjects/cep"
 import Telefone from "../../domain/valueOBjects/telefone"
 
-export class PedidoRepository implements IPedidoRepository {
+export default class PedidoRepository implements IPedidoRepository {
 
   constructor(private unitOfWork: IUnitOfWork) { }
 
@@ -28,7 +28,7 @@ export class PedidoRepository implements IPedidoRepository {
         endereco.cidade,
         endereco.estado,
         endereco.cep.value,
-        endereco.complemento,
+        endereco.complemento ?? null,
         endereco.nomeDestinatario,
         endereco.telefoneDestinatario.value
       ])

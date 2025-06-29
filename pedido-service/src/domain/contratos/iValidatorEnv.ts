@@ -11,6 +11,7 @@ export interface IEnvConfig {
   RABBITMQ_EXCHANGETYPE: string
   RABBITMQ_QUEUE: string
   RABBITMQ_ROUTING_KEY: string
+  AUTH_SERVICE_URL: string
 }
 
 export interface IValidatorEnv {
