@@ -8,12 +8,13 @@ export interface IValidator<T> {
   length(value: number, message?: string): IValidator<T>
   email(message?: string): IValidator<T>
   required(message?: string): IValidator<T>
-  object?<U extends Record<string, IValidator<any>>>(shape: U): IValidator<{ [K in keyof U]: U[K] extends IValidator<infer R> ? R : never }>
-  positive(): IValidator<T>
-  negative(): IValidator<T>
+  object<U extends Record<string, IValidator<any>>>(shape: U): IValidator<{ [K in keyof U]: U[K] extends IValidator<infer R> ? R : never }>
+  positive(message?: string): IValidator<T>
+  negative(message?: string): IValidator<T>
   date(message?: string): IValidator<T>
   datetime(): IValidator<T>
   array(): IValidator<T[]>
+  of<U>(schema: IValidator<U>): IValidator<U[]>
   minArray(length: number, message?: string): IValidator<T[]>
   maxArray(length: number, message?: string): IValidator<T[]>
   optional(): IValidator<T | undefined>

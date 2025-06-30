@@ -113,7 +113,7 @@ describe("ZodValidatorAdapter", () => {
 
     const dadosInvalidos = {
       nome: 'Jo',
-      idade: 15 
+      idade: 15
     }
     expect(() => validator.validate(dadosInvalidos)).toThrow(ValidatorError)
   })
@@ -132,4 +132,60 @@ describe("ZodValidatorAdapter", () => {
     const validator = new ZodValidatorAdapter().string().optional()
     expect(() => validator.validate(123)).toThrow(ValidatorError)
   })
+
+  it("Deve retornar a mensagem customizada definida em required(): ", () => {
+    const validator = new ZodValidatorAdapter().string().optional().required("Campo nome é obrigatório")
+    try {
+      validator.validate(undefined)
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidatorError)
+      const validatorError = error as ValidatorError
+      expect(validatorError.errors[0].message).toBe("Campo nome é obrigatório")
+    }
+  })
+
+  it("Deve retornar mensagem customizada ao falhar no min(): ", () => {
+    const validator = new ZodValidatorAdapter().number().min(5, "Valor mínimo é 5")
+    try {
+      validator.validate(2)
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidatorError)
+      const validatorError = error as ValidatorError
+      expect(validatorError.errors[0].message).toBe("Valor mínimo é 5")
+    }
+  })
+
+  it("Deve retornar mensagem customizada ao email ser inválido: ", () => {
+    const validator = new ZodValidatorAdapter().string().email("Email inválido")
+    try {
+      validator.validate("naoemail")
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidatorError)
+      const validatorError = error as ValidatorError
+      expect(validatorError.errors[0].message).toBe("Email inválido")
+    }
+  })
+
+  it("Deve retornar mensagem customizada ao falhar no length(): ", () => {
+    const validator = new ZodValidatorAdapter().string().length(4, "Deve ter exatamente 4 letras")
+    try {
+      validator.validate("abc")
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidatorError)
+      const validatorError = error as ValidatorError
+      expect(validatorError.errors[0].message).toBe("Deve ter exatamente 4 letras")
+    }
+  })
+
+  it("Deve retornar mensagem customizada ao array ser menor que o mínimo: ", () => {
+    const validator = new ZodValidatorAdapter().array().minArray(3, "Pelo menos 3 itens são necessários")
+    try {
+      validator.validate([1])
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidatorError)
+      const validatorError = error as ValidatorError
+      expect(validatorError.errors[0].message).toBe("Pelo menos 3 itens são necessários")
+    }
+  })
+
 })

@@ -52,8 +52,11 @@ export default class ZodValidatorAdapter<T = any> implements IValidator<T> {
     throw new Error("O método email só pode ser utilizado em tipos string.")
   }
 
-  required() {
-    return new ZodValidatorAdapter(this.schema.refine((val: any) => val !== undefined && val !== null, { message: 'Este campo é obrigatório' }))
+  required(message?: string): IValidator<T> {
+    const msg = message ?? 'Campo obrigatório.'
+    return new ZodValidatorAdapter<T>(
+      this.schema.refine((val) => val !== undefined && val !== null, { message: msg })
+    )
   }
 
   object<U extends Record<string, IValidator<any>>>(shape: U): IValidator<{ [K in keyof U]: U[K] extends IValidator<infer R> ? R : never }> {
@@ -66,13 +69,21 @@ export default class ZodValidatorAdapter<T = any> implements IValidator<T> {
     return new ZodValidatorAdapter(z.object(shapeWithSchemas) as ZodSchema<{ [K in keyof U]: U[K] extends IValidator<infer R> ? R : never }>)
   }
 
-  positive(): IValidator<T> {
-    if (this.schema instanceof ZodNumber) return new ZodValidatorAdapter<T>(this.schema.positive() as unknown as ZodSchema<T>)
+  positive(message?: string): IValidator<T> {
+    if (this.schema instanceof ZodNumber) {
+      return new ZodValidatorAdapter<T>(
+        this.schema.positive({ message }) as unknown as ZodSchema<T>
+      )
+    }
     throw new Error("O método positive só pode ser utilizado em tipos number.")
   }
 
-  negative(): IValidator<T> {
-    if (this.schema instanceof ZodNumber) return new ZodValidatorAdapter<T>(this.schema.negative() as unknown as ZodSchema<T>)
+  negative(message?: string): IValidator<T> {
+    if (this.schema instanceof ZodNumber) {
+      return new ZodValidatorAdapter<T>(
+        this.schema.negative({ message }) as unknown as ZodSchema<T>
+      )
+    }
     throw new Error("O método negative só pode ser utilizado em tipos number.")
   }
 
@@ -88,6 +99,12 @@ export default class ZodValidatorAdapter<T = any> implements IValidator<T> {
 
   array(): IValidator<T[]> {
     return new ZodValidatorAdapter<T[]>(this.schema.array() as ZodSchema<T[]>)
+  }
+
+  of<U>(schema: IValidator<U>): IValidator<U[]> {
+    const inner = (schema as ZodValidatorAdapter<U>).schema
+    const arraySchema = z.array(inner)
+    return new ZodValidatorAdapter(arraySchema)
   }
 
   minArray(length: number, message?: string): IValidator<T[]> {
