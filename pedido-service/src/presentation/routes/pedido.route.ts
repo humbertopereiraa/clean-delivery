@@ -10,6 +10,7 @@ import PedidoRepository from "../../infra/repositories/pedidoRepository"
 import UsuarioRepository from "../../infra/repositories/usuarioRepository"
 import { criarPedidoSchema } from "../../infra/schemas/criarPedido.schema"
 import { uuid } from "../../infra/token/uuid"
+import ZodValidatorAdapter from "../../infra/validators/zodValidatorAdapter"
 import { Configuracao } from "../../main/configuracao"
 import { PedidoController } from "../controllers/pedidoController"
 
@@ -18,11 +19,12 @@ export = async (servidor: HttpServer) => {
   const unitOfWork = new UnitOfWork(conexao)
   const pedidoRepository = new PedidoRepository(unitOfWork)
   const logger = new WinstonLoggerAdapter()
+  const validator = new ZodValidatorAdapter()
   const redisAdapter = await RedisAdapter.getInstance(Configuracao.banco_cache.url, logger)
   const fetchHttpClient = new FetchHttpClient()
   const usuarioHttpService = new UsuarioHttpService(fetchHttpClient, logger)
   const usuarioRepository = new UsuarioRepository(redisAdapter, logger, usuarioHttpService)
-  const criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepository, unitOfWork, uuid, usuarioRepository)
+  const criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepository, unitOfWork, uuid, usuarioRepository, validator)
   const pedidoController = new PedidoController(criarPedidoUseCase)
   servidor.on('/pedido', 'post', pedidoController.criar.bind(pedidoController), criarPedidoSchema)
 }
