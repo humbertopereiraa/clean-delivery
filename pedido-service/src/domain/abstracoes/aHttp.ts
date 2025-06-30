@@ -48,7 +48,7 @@ export default abstract class HttpServer {
         console.error(`O arquivo ${arquivo} não exporta uma função válida.`)
         return
       }
-      rotaModulo.default(servidor)
+      await rotaModulo.default(servidor)
     } catch (error) {
       console.error(`Erro ao carregar o arquivo ${arquivo}:`, error)
     }

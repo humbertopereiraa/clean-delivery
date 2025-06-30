@@ -23,7 +23,7 @@ export async function startServer() {
   await servidor.configurarDocumentacaoRotas(expressSwaggerAdapter, swaggerDocumentation)
 
   //Carregar Rotas
-  servidor.carregarRotas(servidor)
+  await servidor.carregarRotas(servidor)
 
   //Criar conexão com Mensageria
   const logger = new WinstonLoggerAdapter()
