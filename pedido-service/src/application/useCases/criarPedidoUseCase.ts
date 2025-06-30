@@ -1,6 +1,7 @@
 import { ICriarPedidoUseCase } from "../../domain/contratos/iCriarPedidoUseCase"
 import { IUnitOfWork } from "../../domain/contratos/iUnitOfWork"
 import { IUuid } from "../../domain/contratos/iUuid"
+import { IValidator } from "../../domain/contratos/iValidator"
 import EnderecoEntrega from "../../domain/entities/enderecoEntrega"
 import ItensPedido from "../../domain/entities/itensPedido"
 import Pedido from "../../domain/entities/pedido"
@@ -13,21 +14,23 @@ import { ICriarPedidoOutputDTO } from "../dtos/iCriarPedidoOutputDTO"
 
 export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
 
-  constructor(private pedidoRepository: IPedidoRepository, private unitOfWork: IUnitOfWork, private uuid: IUuid, private usuarioRepository: IUsuarioRepository) { }
+  constructor(private pedidoRepository: IPedidoRepository, private unitOfWork: IUnitOfWork,
+    private uuid: IUuid, private usuarioRepository: IUsuarioRepository,
+    private validator: IValidator<ICriarPedidoInputDTO>) { }
 
   async execute(input: ICriarPedidoInputDTO): Promise<ICriarPedidoOutputDTO> {
     try {
       await this.unitOfWork.start()
-      const pedidoId = this.uuid.gerar()
 
+      this.validarInputCriarPedido(input)
+
+      const pedidoId = this.uuid.gerar()
       const { endereco, itens, clienteId, valorEntrega } = input
 
       const usuario = await this.usuarioRepository.obterPorId(clienteId)
       if (!usuario) {
         throw new Error('Usuário não encontrado.')
       }
-
-      //TODO: Adicionar validações no input
 
       const enderecoInput = new EnderecoEntrega(
         this.uuid.gerar(),
@@ -80,5 +83,35 @@ export default class CriarPedidoUseCase implements ICriarPedidoUseCase {
       await this.unitOfWork.rollback()
       throw error
     }
+  }
+
+  private validarInputCriarPedido(pedido: ICriarPedidoInputDTO): void {
+    if (!this.validator?.object) throw new Error("Validator não foi inicializado corretamente.")
+
+    const schema = this.validator.object({
+      clienteId: this.validator.string().optional().required("ClienteId é obrigatório"),
+      valorEntrega: this.validator.number().min(0, "Valor de entrega deve ser maior ou igual a zero"),
+
+      endereco: this.validator.object({
+        rua: this.validator.string().optional().required("Rua é obrigatória"),
+        numero: this.validator.string().optional().required("Número é obrigatório"),
+        bairro: this.validator.string().optional().required("Bairro é obrigatório"),
+        cidade: this.validator.string().optional().required("Cidade é obrigatória"),
+        estado: this.validator.string().optional().required("Estado é obrigatório"),
+        cep: this.validator.string().optional().required("CEP é obrigatório"),
+        nomeDestinatario: this.validator.string().required("Nome do destinatário é obrigatório"),
+        telefoneDestinatario: this.validator.string().required("Telefone do destinatário é obrigatório")
+      }),
+
+      itens: this.validator.array().of(
+        this.validator.object({
+          nome: this.validator.string().required("Nome do item é obrigatório"),
+          quantidade: this.validator.number().positive("Quantidade deve ser > 0").required(),
+          preco: this.validator.number().min(0, "Preço deve ser >= 0").required()
+        })
+      ).minArray(1, "Pedido deve ter ao menos 1 item")
+    })
+
+    schema.validate(pedido)
   }
 }

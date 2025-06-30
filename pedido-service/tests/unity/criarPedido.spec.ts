@@ -11,12 +11,15 @@ import Telefone from '../../src/domain/valueOBjects/telefone'
 import ItensPedido from '../../src/domain/entities/itensPedido'
 import { IUsuarioRepository } from '../../src/domain/repositories/iUsuarioRepository'
 import { Role, Usuario } from '../../src/domain/entities/usuario'
+import { IValidator } from '../../src/domain/contratos/iValidator'
+import ZodValidatorAdapter from '../../src/infra/validators/zodValidatorAdapter'
 
 describe('CriarPedido', () => {
   let pedidoRepositoryMock: jest.Mocked<IPedidoRepository>
   let unitOfWorkMock: jest.Mocked<IUnitOfWork>
   let uuidMock: jest.Mocked<IUuid>
   let usuarioRepositoryMock: jest.Mocked<IUsuarioRepository>
+  let validatorMock: IValidator<ICriarPedidoInputDTO>
   let criarPedidoUseCase: ICriarPedidoUseCase
 
   const dto = {
@@ -56,9 +59,10 @@ describe('CriarPedido', () => {
       salvar: jest.fn(),
       atualizar: jest.fn(),
       deletar: jest.fn()
-    } 
+    }
 
-    criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepositoryMock, unitOfWorkMock, uuidMock, usuarioRepositoryMock)
+    validatorMock = new ZodValidatorAdapter()
+    criarPedidoUseCase = new CriarPedidoUseCase(pedidoRepositoryMock, unitOfWorkMock, uuidMock, usuarioRepositoryMock, validatorMock)
   })
 
   it('Deve criar e salvar um pedido com sucesso: ', async () => {
@@ -101,4 +105,38 @@ describe('CriarPedido', () => {
     expect(unitOfWorkMock.commit).not.toHaveBeenCalled()
     expect(unitOfWorkMock.rollback).toHaveBeenCalled()
   })
+
+  it('Deve lançar erro se clienteId estiver ausente: ', async () => {
+    const dtoClone = { ...dto }
+    dtoClone.clienteId = undefined as any
+    await expect(criarPedidoUseCase.execute(dtoClone)).rejects.toThrow('ClienteId é obrigatório')
+    expect(unitOfWorkMock.start).toHaveBeenCalled()
+    expect(unitOfWorkMock.rollback).toHaveBeenCalled()
+    expect(pedidoRepositoryMock.salvar).not.toHaveBeenCalled()
+  })
+
+  it('Deve lançar erro se itens estiver vazio: ', async () => {
+    const dtoClone = { ...dto }
+    dtoClone.itens = []
+    await expect(criarPedidoUseCase.execute(dtoClone)).rejects.toThrow('Pedido deve ter ao menos 1 item')
+
+    expect(unitOfWorkMock.start).toHaveBeenCalled()
+    expect(unitOfWorkMock.rollback).toHaveBeenCalled()
+    expect(pedidoRepositoryMock.salvar).not.toHaveBeenCalled()
+  })
+
+  it('Deve lançar erro se algum item tiver quantidade inválida: ', async () => {
+    const dtoComItemInvalido = {
+      ...dto,
+      itens: [
+        { nome: 'Item válido', quantidade: 2, preco: 10.0 },
+        { nome: 'Item inválido', quantidade: 0, preco: 10.0 }
+      ]
+    }
+
+    await expect(criarPedidoUseCase.execute(dtoComItemInvalido)).rejects.toThrow('Quantidade deve ser > 0')
+    expect(unitOfWorkMock.rollback).toHaveBeenCalled()
+    expect(pedidoRepositoryMock.salvar).not.toHaveBeenCalled()
+  })
+
 })
