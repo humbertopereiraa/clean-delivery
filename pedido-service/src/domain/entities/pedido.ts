@@ -46,7 +46,7 @@ export default class Pedido {
   }
 
   private validar(): void {
-    if (!isNotNullOrEmpty(this._id)) throw new PedidoError('O ID do endereço é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
+    if (!isNotNullOrEmpty(this._id)) throw new PedidoError('O ID do pedido é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!isNotNullOrEmpty(this._clienteId)) throw new PedidoError('O ID do cliente é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!this._enderecoEntrega || Object.keys(this._enderecoEntrega).length === 0) throw new PedidoError('O endereço de entrega é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!this._itens || !Array.isArray(this._itens) || this._itens.length === 0) throw new PedidoError('O pedido deve conter pelo menos um item.', ErrorDomain.E_CAMPO_OBRIGATORIO)
