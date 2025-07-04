@@ -14,16 +14,14 @@ export default class Entrega {
   private readonly _aceitaEm: Date
   private readonly _entregueEm?: Date
   private readonly _status: NEntrega.status
-  private readonly _observacoes?: string
 
-  constructor(id: string, pedidoId: string, entregadorId: string, status: NEntrega.status, aceitaEm: Date, entregueEm?: Date, observacoes?: string) {
+  constructor(id: string, pedidoId: string, entregadorId: string, status: NEntrega.status, aceitaEm: Date, entregueEm?: Date) {
     this._id = id
     this._pedidoId = pedidoId
     this._entregadorId = entregadorId
     this._status = status
     this._aceitaEm = aceitaEm
     this._entregueEm = entregueEm
-    this._observacoes = observacoes
 
     this.validar()
   }
@@ -34,7 +32,6 @@ export default class Entrega {
   get aceitaEm(): Date { return this._aceitaEm }
   get entregueEm(): Date | undefined { return this._entregueEm }
   get status(): NEntrega.status { return this._status }
-  get observacoes(): string | undefined { return this._observacoes }
 
   private validar(): void {
     if (!isNotNullOrEmpty(this._id)) throw new EntregaError('O ID da entrega é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)

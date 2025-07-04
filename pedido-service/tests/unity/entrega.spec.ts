@@ -8,10 +8,9 @@ describe('Entrega', () => {
   const entregadorId = 'd1d2d3d4-1234-5678-9012-aaaabbbbcccc'
   const aceitaEm = new Date()
   const entregueEm = new Date()
-  const observacoes = 'Deixar na portaria'
 
   it('Deve criar uma instância válida de Entrega com status "aceita": ', () => {
-    const sut = new Entrega(id, pedidoId, entregadorId, 'aceita', aceitaEm, undefined, observacoes)
+    const sut = new Entrega(id, pedidoId, entregadorId, 'aceita', aceitaEm, undefined)
 
     expect(sut).toBeInstanceOf(Entrega)
     expect(sut.id).toBe(id)
@@ -20,7 +19,6 @@ describe('Entrega', () => {
     expect(sut.status).toBe('aceita')
     expect(sut.aceitaEm).toBeInstanceOf(Date)
     expect(sut.entregueEm).toBeUndefined()
-    expect(sut.observacoes).toBe(observacoes)
   })
 
   it('Deve criar uma entrega válida com status "entregue" e entregueEm definido: ', () => {

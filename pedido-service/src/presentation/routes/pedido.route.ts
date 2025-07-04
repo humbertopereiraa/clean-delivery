@@ -17,8 +17,8 @@ import { PedidoController } from "../controllers/pedidoController"
 export = async (servidor: HttpServer) => {
   const conexao = new KnexConexaoAdapter()
   const unitOfWork = new UnitOfWork(conexao)
-  const pedidoRepository = new PedidoRepository(unitOfWork)
   const logger = new WinstonLoggerAdapter()
+  const pedidoRepository = new PedidoRepository(unitOfWork, logger)
   const validator = new ZodValidatorAdapter()
   const redisAdapter = await RedisAdapter.getInstance(Configuracao.banco_cache.url, logger)
   const fetchHttpClient = new FetchHttpClient()

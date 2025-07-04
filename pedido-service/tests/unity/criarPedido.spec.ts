@@ -41,7 +41,7 @@ describe('CriarPedido', () => {
   beforeEach(() => {
     pedidoRepositoryMock = {
       salvar: jest.fn()
-    }
+    } as any
 
     unitOfWorkMock = {
       start: jest.fn(),
