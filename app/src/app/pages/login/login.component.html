@@ -1,0 +1,121 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="row bg-white rounded-4 shadow-lg overflow-hidden" style="max-width: 1000px; min-height: 600px;">
+
+    <!-- Seção da Logo (lado esquerdo) -->
+    <div class="col-lg-6 d-none d-lg-flex position-relative p-0 backgroundColorPadrao">
+      <div class="w-100 h-100 d-flex align-items-center justify-content-center p-4">
+        <img src="../../../assets/images/logo-clean-delivery.png" alt="Logo do App" class="img-fluid"
+          style="max-height: 80%; max-width: 80%; object-fit: contain;">
+      </div>
+    </div>
+
+    <!-- Seção do Formulário (lado direito) -->
+    <div class="col-lg-6 col-12 d-flex flex-column justify-content-center p-4 p-lg-5">
+
+      <!-- Header Mobile Logo (visível apenas em mobile) -->
+      <div class="d-lg-none text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
+          style="width: 60px; height: 60px;">
+          <img src="../../../assets/images/logo-clean-delivery.png" alt="Logo do App" class="img-fluid">
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <h1 class="fw-bold mb-2" style="font-size: 2rem; color: #1f2937;">Bem-vindo</h1>
+        <p class="text-muted mb-0">Entre na sua conta para continuar</p>
+      </div>
+
+      <!-- Formulario -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <!-- Campo do Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold text-dark">Email</label>
+          <input type="email" class="form-control form-control-lg rounded-3"
+            [class.is-invalid]="email?.invalid && email?.touched" id="email" formControlName="email"
+            placeholder="seu@email.com" style="background-color: #fafafa; border: 2px solid #e5e7eb;" />
+          @if (email?.invalid && email?.touched) {
+          <div class="invalid-feedback">
+            @if (email?.errors?.['required']) {
+            <span>Email é obrigatório</span>
+            }
+            @if (email?.errors?.['email']) {
+            <span>Email inválido</span>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- Campo da Senha -->
+        <div class="mb-3">
+          <label for="password" class="form-label fw-semibold text-dark">Senha</label>
+          <div class="input-group">
+            <input [type]="showPassword() ? 'text' : 'password'" class="form-control form-control-lg rounded-start-3"
+              [class.is-invalid]="password?.invalid && password?.touched" id="password" formControlName="password"
+              placeholder="Digite sua senha"
+              style="background-color: #fafafa; border: 2px solid #e5e7eb; border-right: none;" />
+            <button class="btn btn-outline-secondary rounded-end-3" type="button" (click)="togglePasswordVisibility()"
+              style="border: 2px solid #e5e7eb; border-left: none; background-color: #fafafa;">
+              @if (!showPassword()) {
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="2" />
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+              </svg>
+              } @else {
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12A16.16 16.16 0 0 1 6.06 6.06L17.94 17.94Z"
+                  stroke="currentColor" stroke-width="2" />
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4C19 4 23 12 23 12A16.16 0 0 1 19.36 15.36L9.9 4.24Z"
+                  stroke="currentColor" stroke-width="2" />
+                <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" />
+              </svg>
+              }
+            </button>
+          </div>
+          @if (password?.invalid && password?.touched) {
+          <div class="invalid-feedback">
+            @if (password?.errors?.['required']) {
+            <span>Senha é obrigatória</span>
+            }
+            @if (password?.errors?.['minlength']) {
+            <span>Senha deve ter pelo menos 6 caracteres</span>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- Esqueceu a senha -->
+        <div class="d-flex justify-content-between align-items-center mb-4" style="float: inline-end;">
+          <a href="#" class="text-decoration-none" style="color: #6c63ff">Esqueceu a senha?</a>
+        </div>
+
+        <!-- Botao de Entrar -->
+        <button type="submit" class="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-4 backgroundColorPadrao"
+          [disabled]="isLoading()" style="border: none; padding: 0.875rem;">
+          @if (!isLoading()) {
+          <span>Entrar</span>
+          } @else {
+          <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          }
+        </button>
+      </form>
+
+      <!-- linha -->
+      <div class="position-relative text-center mb-4">
+        <hr class="my-0">
+        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">ou</span>
+      </div>
+
+      <!-- Cadastrar -->
+      <div class="text-center">
+        <p class="text-muted mb-0">
+          Não tem uma conta?
+          <a href="#" class="text-decoration-none fw-semibold" style="color: #6c63ff;">Cadastre-se</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
