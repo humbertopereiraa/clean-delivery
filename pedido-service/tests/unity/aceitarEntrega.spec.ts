@@ -9,12 +9,15 @@ import Pedido, { NPedido } from "../../src/domain/entities/pedido"
 import { IAceitarEntregaUseCase } from '../../src/domain/contratos/iAceitarEntregaUseCase'
 import AceitarEntregaUseCase from '../../src/application/useCases/aceitarEntregaUseCase'
 import Entrega from "../../src/domain/entities/entrega"
+import { IUsuarioRepository } from "../../src/domain/repositories/iUsuarioRepository"
+import { Role, Usuario } from "../../src/domain/entities/usuario"
 
 describe('AceitarEntrega', () => {
   let pedidoRepositoryMock: jest.Mocked<IPedidoRepository>
   let entregaRepositoryMock: jest.Mocked<IEntregaRepository>
   let unitOfWorkMock: jest.Mocked<IUnitOfWork>
   let uuidMock: jest.Mocked<IUuid>
+  let usuarioRepositoryMock: jest.Mocked<IUsuarioRepository>
   let validator: IValidator<IAceitarEntregaInputDTO>
   let aceitarEntregaUseCase: IAceitarEntregaUseCase
 
@@ -55,12 +58,17 @@ describe('AceitarEntrega', () => {
       gerar: jest.fn().mockReturnValue('entrega-uuid')
     }
 
+    usuarioRepositoryMock = {
+      obterPorId: jest.fn(),
+    } as any
+
     validator = new ZodValidatorAdapter()
 
-    aceitarEntregaUseCase = new AceitarEntregaUseCase(pedidoRepositoryMock, entregaRepositoryMock, unitOfWorkMock, uuidMock, validator)
+    aceitarEntregaUseCase = new AceitarEntregaUseCase(pedidoRepositoryMock, entregaRepositoryMock, usuarioRepositoryMock, unitOfWorkMock, uuidMock, validator)
   })
 
   it('Deve aceitar uma entrega com sucesso: ', async () => {
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario(input.entregadorId, 'Teste', 'any@email.com', Role.ENTREGADOR))
     pedidoRepositoryMock.buscarPorId.mockResolvedValue(pedidoMock)
     const sut = await aceitarEntregaUseCase.execute(input)
 
@@ -79,12 +87,14 @@ describe('AceitarEntrega', () => {
   })
 
   it('Deve lançar erro se o pedido não existir: ', async () => {
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario(input.entregadorId, 'Teste', 'any@email.com', Role.ENTREGADOR))
     pedidoRepositoryMock.buscarPorId.mockResolvedValueOnce(null)
     await expect(aceitarEntregaUseCase.execute(input)).rejects.toThrow('Pedido não encontrado.')
     expect(unitOfWorkMock.rollback).toHaveBeenCalled()
   })
 
   it('Deve lançar erro se o status do pedido não for "pronto": ', async () => {
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario(input.entregadorId, 'Teste', 'any@email.com', Role.ENTREGADOR))
     pedidoRepositoryMock.buscarPorId.mockResolvedValueOnce({
       ...pedidoMock,
       status: 'preparando' as NPedido.status
@@ -95,6 +105,7 @@ describe('AceitarEntrega', () => {
   })
 
   it('Deve lançar erro se o pedido já tiver sido aceito: ', async () => {
+    usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario(input.entregadorId, 'Teste', 'any@email.com', Role.ENTREGADOR))
     pedidoRepositoryMock.buscarPorId.mockResolvedValue(pedidoMock)
     entregaRepositoryMock.buscarPorPedidoId.mockResolvedValueOnce({} as Entrega)
 

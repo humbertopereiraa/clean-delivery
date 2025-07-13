@@ -5,12 +5,13 @@ import { IValidator } from "../../domain/contratos/iValidator"
 import Entrega from "../../domain/entities/entrega"
 import { IEntregaRepository } from "../../domain/repositories/iEntregaRepository"
 import { IPedidoRepository } from "../../domain/repositories/iPedidoRepository"
+import { IUsuarioRepository } from "../../domain/repositories/iUsuarioRepository"
 import { IAceitarEntregaInputDTO } from "../dtos/iAceitarEntregaInputDTO"
 import { IAceitarEntregaOutputDTO } from "../dtos/iAceitarEntregaOutputDTO"
 
 export default class AceitarEntregaUseCase implements IAceitarEntregaUseCase {
 
-  constructor(private pedidoRepository: IPedidoRepository, private entregaRepository: IEntregaRepository,
+  constructor(private pedidoRepository: IPedidoRepository, private entregaRepository: IEntregaRepository, private usuarioRepository: IUsuarioRepository,
     private unitOfWork: IUnitOfWork, private uuid: IUuid, private validator: IValidator<IAceitarEntregaInputDTO>) { }
 
   async execute(input: IAceitarEntregaInputDTO): Promise<IAceitarEntregaOutputDTO> {
@@ -22,7 +23,14 @@ export default class AceitarEntregaUseCase implements IAceitarEntregaUseCase {
 
       const pedidoPorId = await this.pedidoRepository.buscarPorId(pedidoId)
       if (!pedidoPorId) throw new Error('Pedido não encontrado.')
-      if (pedidoPorId.status !== 'pronto') throw new Error('Pedido não está pronto para ser aceito.')
+      if (pedidoPorId.status !== 'pronto') {
+        throw new Error('Pedido não está pronto para ser aceito.')
+      }
+
+      const entregador = await this.usuarioRepository.obterPorId(entregadorId)
+      if (!entregador) {
+        throw new Error('Usuário entregador não encontrado.')
+      }
 
       const entregaExistente = await this.entregaRepository.buscarPorPedidoId(pedidoId)
       if (entregaExistente) throw new Error('Este pedido já foi aceito.')
