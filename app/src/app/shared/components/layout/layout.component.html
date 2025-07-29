@@ -1,0 +1,133 @@
+<ng-container [ngSwitch]="isLogado">
+  <ng-container *ngSwitchCase="true">
+    <ng-container *ngTemplateOutlet="usuarioLogado"></ng-container>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="false">
+    <ng-container *ngTemplateOutlet="usuarioNaoLogado"></ng-container>
+  </ng-container>
+</ng-container>
+
+<ng-template #usuarioLogado>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" [class.collapsed]="sidebarCollapsed" id="sidebar-wrapper">
+      <div class="sidebar-header d-flex align-items-center justify-content-center py-3">
+        <!-- <i class="fas fa-utensils text-white" style="font-size: 1.5rem;"></i>
+
+        <span class="sidebar-title text-white fw-bold ms-2" [class.d-none]="sidebarCollapsed">DeliveryApp</span> -->
+        <img src="../../../assets/images/logo-motoboy.png" alt="Logo do App" class="img-fluid logo">
+        <span class="sidebar-title fw-bold ms-2" style="color: black;" [class.d-none]="sidebarCollapsed">Clean Delivery</span>
+      </div>
+
+      <div class="sidebar-menu">
+        <ng-container *ngFor="let item of itensMenu">
+          <!-- Item sem subitens -->
+          <a *ngIf="!item.subItens" [routerLink]="item.rota" routerLinkActive="active"
+            class="sidebar-item d-flex align-items-center" [title]="sidebarCollapsed ? item.titulo : ''">
+            <i [class]="item.icone" class="sidebar-icon"></i>
+            <span class="sidebar-text ms-3" [class.d-none]="sidebarCollapsed">{{ item.titulo }}</span>
+          </a>
+
+          <!-- Item com subitens -->
+          <div *ngIf="item.subItens" class="sidebar-dropdown">
+            <a class="sidebar-item d-flex align-items-center" data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#collapse-' + item.id" [attr.aria-expanded]="false"
+              [title]="sidebarCollapsed ? item.titulo : ''">
+              <i [class]="item.icone" class="sidebar-icon"></i>
+              <span class="sidebar-text ms-3" [class.d-none]="sidebarCollapsed">{{ item.titulo }}</span>
+              <i class="fas fa-chevron-down ms-auto sidebar-arrow" [class.d-none]="sidebarCollapsed"></i>
+            </a>
+
+            <div class="collapse sidebar-submenu" [id]="'collapse-' + item.id" *ngIf="!sidebarCollapsed">
+              <a *ngFor="let subItem of item.subItens" [routerLink]="subItem.rota" routerLinkActive="active"
+                class="sidebar-subitem d-flex align-items-center">
+                <i [class]="subItem.icone" class="sidebar-icon"></i>
+                <span class="sidebar-text ms-3">{{ subItem.titulo }}</span>
+              </a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Botão de logout -->
+      <div class="sidebar-footer mt-auto p-3">
+        <button class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center"
+          (click)="realizarLogout()" [title]="sidebarCollapsed ? 'Sair' : ''">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="ms-2" [class.d-none]="sidebarCollapsed">Sair</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteúdo da página -->
+    <div class="main-content flex-grow-1">
+      <!-- Navbar superior -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container-fluid">
+          <button class="btn btn-primary me-3" (click)="alternarSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <h4 class="mb-0">{{ tituloAtual }}</h4>
+
+          <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+            <!-- Notificações -->
+            <div class="nav-item me-3">
+              <button class="btn btn-outline-secondary position-relative">
+                <i class="fas fa-bell"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  3
+                  <span class="visually-hidden">notificações não lidas</span>
+                </span>
+              </button>
+            </div>
+
+            <!-- Dropdown do usuário -->
+            <div class="nav-item dropdown" *ngIf="usuarioAtual">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" role="button"
+                style="text-decoration: none;">
+                <img [src]="usuarioAtual.avatar || '/placeholder.svg?height=32&width=32'" class="rounded-circle me-2"
+                  width="32" height="32" alt="Avatar">
+                <span>{{ usuarioAtual.nome }}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-user me-2"></i>Perfil
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-cog me-2"></i>Configurações
+                  </a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li>
+                  <a class="dropdown-item" (click)="realizarLogout()" style="cursor: pointer;">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sair
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Conteúdo principal -->
+      <div class="container-fluid p-4">
+        <ng-container *ngTemplateOutlet="routerOutle"></ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #usuarioNaoLogado>
+  <ng-container *ngTemplateOutlet="routerOutle"></ng-container>
+</ng-template>
+
+<ng-template #routerOutle>
+  <router-outlet></router-outlet>
+</ng-template>

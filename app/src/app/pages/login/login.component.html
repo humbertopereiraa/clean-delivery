@@ -28,61 +28,24 @@
 
       <!-- Formulario -->
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
-        <!-- Campo do Email -->
         <div class="mb-3">
           <label for="email" class="form-label fw-semibold text-dark">Email</label>
-          <input type="email" class="form-control form-control-lg rounded-3"
-            [class.is-invalid]="email?.invalid && email?.touched" id="email" formControlName="email"
-            placeholder="seu@email.com" style="background-color: #fafafa; border: 2px solid #e5e7eb;" />
-          @if (email?.invalid && email?.touched) {
-          <div class="invalid-feedback">
-            @if (email?.errors?.['required']) {
-            <span>Email é obrigatório</span>
-            }
-            @if (email?.errors?.['email']) {
-            <span>Email inválido</span>
-            }
+          <input type="email" class="form-control" id="email" formControlName="email"
+            [class.is-invalid]="email?.invalid && email?.touched" placeholder="seu@email.com">
+          <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+            <div *ngIf="email?.errors?.['required']">Email é obrigatório</div>
+            <div *ngIf="email?.errors?.['email']">Email inválido</div>
           </div>
-          }
         </div>
 
-        <!-- Campo da Senha -->
         <div class="mb-3">
           <label for="password" class="form-label fw-semibold text-dark">Senha</label>
-          <div class="input-group">
-            <input [type]="showPassword() ? 'text' : 'password'" class="form-control form-control-lg rounded-start-3"
-              [class.is-invalid]="password?.invalid && password?.touched" id="password" formControlName="password"
-              placeholder="Digite sua senha"
-              style="background-color: #fafafa; border: 2px solid #e5e7eb; border-right: none;" />
-            <button class="btn btn-outline-secondary rounded-end-3" type="button" (click)="togglePasswordVisibility()"
-              style="border: 2px solid #e5e7eb; border-left: none; background-color: #fafafa;">
-              @if (!showPassword()) {
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="2" />
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
-              </svg>
-              } @else {
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12A16.16 16.16 0 0 1 6.06 6.06L17.94 17.94Z"
-                  stroke="currentColor" stroke-width="2" />
-                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4C19 4 23 12 23 12A16.16 0 0 1 19.36 15.36L9.9 4.24Z"
-                  stroke="currentColor" stroke-width="2" />
-                <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2" />
-              </svg>
-              }
-            </button>
+          <input type="password" class="form-control" id="password" formControlName="password"
+            [class.is-invalid]="password?.invalid && password?.touched" placeholder="Sua senha">
+          <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+            <div *ngIf="password?.errors?.['required']">Senha é obrigatória</div>
+            <div *ngIf="password?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</div>
           </div>
-          @if (password?.invalid && password?.touched) {
-          <div class="invalid-feedback">
-            @if (password?.errors?.['required']) {
-            <span>Senha é obrigatória</span>
-            }
-            @if (password?.errors?.['minlength']) {
-            <span>Senha deve ter pelo menos 6 caracteres</span>
-            }
-          </div>
-          }
         </div>
 
         <!-- Esqueceu a senha -->
@@ -90,16 +53,10 @@
           <a href="#" class="text-decoration-none" style="color: #6c63ff">Esqueceu a senha?</a>
         </div>
 
-        <!-- Botao de Entrar -->
-        <button type="submit" class="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-4 backgroundColorPadrao"
-          [disabled]="isLoading()" style="border: none; padding: 0.875rem;">
-          @if (!isLoading()) {
-          <span>Entrar</span>
-          } @else {
-          <div class="spinner-border spinner-border-sm" role="status">
-            <span class="visually-hidden">Carregando...</span>
-          </div>
-          }
+        <button type="submit" class="btn btn-lg w-100 text-white fw-semibold rounded-3 mb-4 botaoEntrar"
+          [disabled]="isLoading">
+          <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
+          {{ isLoading ? 'Entrando...' : 'Entrar' }}
         </button>
       </form>
 

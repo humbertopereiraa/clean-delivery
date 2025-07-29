@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, OnInit, signal } from '@angular/core'
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { AuthService, ICredenciaisLogin } from '../../core/services/auth.service'
 
 @Component({
   selector: 'app-login',
@@ -12,10 +13,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class LoginComponent implements OnInit {
 
   public loginForm: FormGroup
-  public isLoading = signal(false)
+  public isLoading: boolean = false
   public showPassword = signal(false)
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
     this.loginForm = this.formBuilder.group({
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required, Validators.minLength(6)]]
@@ -34,7 +35,25 @@ export class LoginComponent implements OnInit {
 
   public async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
-      this.isLoading.set(true)
+      this.isLoading = true
+
+      const credentials: ICredenciaisLogin = this.loginForm.value
+
+      this.authService.logar(credentials).subscribe({
+        next: (response) => {
+          this.isLoading = false
+
+          if (!response.sucesso) {
+            return
+          }
+
+          this.authService.redirecionarParaDashboard()
+        },
+        error: (error) => {
+          console.error("Erro no login:", error)
+          this.isLoading = false
+        }
+      })
     }
   }
 
