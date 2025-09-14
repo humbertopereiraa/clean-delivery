@@ -1,4 +1,4 @@
-import Entrega, { NEntrega } from '../../src/domain/entities/entrega'
+import Entrega, { EntregaStatus } from '../../src/domain/entities/entrega'
 import EntregaError from '../../src/domain/errors/entregaError'
 
 describe('Entrega', () => {
@@ -47,7 +47,7 @@ describe('Entrega', () => {
 
   it('Deve lançar EntregaError se o status for inválido: ', () => {
     expect(() =>
-      new Entrega(id, pedidoId, entregadorId, 'cancelado' as NEntrega.status, aceitaEm)
+      new Entrega(id, pedidoId, entregadorId, 'cancelado' as EntregaStatus, aceitaEm)
     ).toThrow(EntregaError)
   })
 

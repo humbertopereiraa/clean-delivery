@@ -1,9 +1,9 @@
-import { NEntrega } from "../../domain/entities/entrega"
+import { EntregaStatus } from "../../domain/entities/entrega"
 
 export interface IAceitarEntregaOutputDTO {
   id: string
   pedidoId: string
   entregadorId: string
-  status: NEntrega.status
+  status: EntregaStatus
   aceitaEm: Date
 }

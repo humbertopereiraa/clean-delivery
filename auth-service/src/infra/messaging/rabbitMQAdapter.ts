@@ -2,16 +2,7 @@ import { IEvento, ETipoEvento } from "../../domain/event/iEvento"
 import { connect, Channel, ChannelModel } from 'amqplib'
 import { IMensageria } from "../../domain/event/iMensageria"
 import { ILogger } from "../../domain/contratos/iLogger"
-
-export namespace NRabbitMQAdapter {
-  export type IConfiguracao = {
-    url: string
-    exchangeName: string
-    exchangeType: string,
-    queue: string
-    routingKeys: string
-  }
-}
+import { IRabbitMQConfiguracao } from "./rabbitMQConfig"
 
 export default class RabbitMQAdapter implements IMensageria {
 
@@ -20,11 +11,11 @@ export default class RabbitMQAdapter implements IMensageria {
   private channel: Channel | null = null
   private isConnecting: boolean = false
 
-  private constructor(private readonly mensageriaConfiguracao: NRabbitMQAdapter.IConfiguracao, private logger: ILogger) {
+  private constructor(private readonly mensageriaConfiguracao: IRabbitMQConfiguracao, private logger: ILogger) {
     if (!this.mensageriaConfiguracao.url) throw new Error('Erro ULR não informada.')
   }
 
-  public static getInstance(mensageriaConfiguracao: NRabbitMQAdapter.IConfiguracao, logger: ILogger): RabbitMQAdapter {
+  public static getInstance(mensageriaConfiguracao: IRabbitMQConfiguracao, logger: ILogger): RabbitMQAdapter {
     if (!RabbitMQAdapter.instance) {
       RabbitMQAdapter.instance = new RabbitMQAdapter(mensageriaConfiguracao, logger)
     }

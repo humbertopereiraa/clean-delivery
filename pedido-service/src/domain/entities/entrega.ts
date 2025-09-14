@@ -2,9 +2,7 @@ import { ErrorDomain } from "../../shared/constants"
 import isNotNullOrEmpty from "../../shared/utils"
 import EntregaError from "../errors/entregaError"
 
-export namespace NEntrega {
-  export type status = "aceita" | "em_transito" | "entregue"
-}
+export type EntregaStatus = "aceita" | "em_transito" | "entregue"
 
 export default class Entrega {
 
@@ -13,9 +11,9 @@ export default class Entrega {
   private readonly _entregadorId: string
   private readonly _aceitaEm: Date
   private readonly _entregueEm?: Date
-  private readonly _status: NEntrega.status
+  private readonly _status: EntregaStatus
 
-  constructor(id: string, pedidoId: string, entregadorId: string, status: NEntrega.status, aceitaEm: Date, entregueEm?: Date) {
+  constructor(id: string, pedidoId: string, entregadorId: string, status: EntregaStatus, aceitaEm: Date, entregueEm?: Date) {
     this._id = id
     this._pedidoId = pedidoId
     this._entregadorId = entregadorId
@@ -31,13 +29,13 @@ export default class Entrega {
   get entregadorId(): string { return this._entregadorId }
   get aceitaEm(): Date { return this._aceitaEm }
   get entregueEm(): Date | undefined { return this._entregueEm }
-  get status(): NEntrega.status { return this._status }
+  get status(): EntregaStatus { return this._status }
 
   private validar(): void {
     if (!isNotNullOrEmpty(this._id)) throw new EntregaError('O ID da entrega é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!isNotNullOrEmpty(this._pedidoId)) throw new EntregaError('O ID do pedido é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
     if (!isNotNullOrEmpty(this._entregadorId)) throw new EntregaError('O ID do entregador é obrigatório.', ErrorDomain.E_CAMPO_OBRIGATORIO)
-    const statusValidos: NEntrega.status[] = ["aceita", "em_transito", "entregue"]
+    const statusValidos: EntregaStatus[] = ["aceita", "em_transito", "entregue"]
     if (!statusValidos.includes(this._status)) throw new EntregaError(`Status '${this._status}' inválido para a entrega.`, ErrorDomain.E_FORMATO_INVALIDO)
     if (!(this._aceitaEm instanceof Date) || isNaN(this._aceitaEm?.getTime())) throw new EntregaError('A data de aceitação é inválida.', ErrorDomain.E_FORMATO_INVALIDO)
     if (this._status === "entregue") {

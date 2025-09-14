@@ -5,7 +5,7 @@ import { IUuid } from "../../src/domain/contratos/iUuid"
 import { IValidator } from "../../src/domain/contratos/iValidator"
 import { IAceitarEntregaInputDTO } from '../../src/application/dtos/iAceitarEntregaInputDTO'
 import ZodValidatorAdapter from "../../src/infra/validators/zodValidatorAdapter"
-import Pedido, { NPedido } from "../../src/domain/entities/pedido"
+import Pedido, { PedidoStatus } from "../../src/domain/entities/pedido"
 import { IAceitarEntregaUseCase } from '../../src/domain/contratos/iAceitarEntregaUseCase'
 import AceitarEntregaUseCase from '../../src/application/useCases/aceitarEntregaUseCase'
 import Entrega from "../../src/domain/entities/entrega"
@@ -97,7 +97,7 @@ describe('AceitarEntrega', () => {
     usuarioRepositoryMock.obterPorId.mockResolvedValue(new Usuario(input.entregadorId, 'Teste', 'any@email.com', Role.ENTREGADOR))
     pedidoRepositoryMock.buscarPorId.mockResolvedValueOnce({
       ...pedidoMock,
-      status: 'preparando' as NPedido.status
+      status: 'preparando' as PedidoStatus
     } as any)
 
     await expect(aceitarEntregaUseCase.execute(input)).rejects.toThrow('Pedido não está pronto para ser aceito.')

@@ -1,6 +1,6 @@
 import EnderecoEntrega from '../../src/domain/entities/enderecoEntrega'
 import ItensPedido from '../../src/domain/entities/itensPedido'
-import Pedido, { NPedido } from '../../src/domain/entities/pedido'
+import Pedido, { PedidoStatus } from '../../src/domain/entities/pedido'
 import PedidoError from '../../src/domain/errors/pedidoError'
 
 describe('Pedido', () => {
@@ -9,7 +9,7 @@ describe('Pedido', () => {
   const id = 'a1b2c3d4-e5f6-7890-1234-567890abcdef'
   const clienteId = 'c1c2c3c4-d5d6-7890-1234-567890fedcba'
   const valorEntrega = 15.50
-  const status: NPedido.status = 'preparando'
+  const status: PedidoStatus = 'preparando'
   const criadoEm = new Date()
   const atualizadoEm = new Date()
 
@@ -105,7 +105,7 @@ describe('Pedido', () => {
   })
 
   it('Deve lançar PedidoError se o status for inválido: ', () => {
-    const statusInvalido = 'status_invalido' as NPedido.status
+    const statusInvalido = 'status_invalido' as PedidoStatus
     expect(() => new Pedido(id, clienteId, enderecoEntregaMock, itensPedidoMock, valorEntrega, statusInvalido, criadoEm, atualizadoEm)).toThrow(PedidoError)
   })
 

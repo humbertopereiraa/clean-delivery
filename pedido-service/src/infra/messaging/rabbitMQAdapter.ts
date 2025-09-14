@@ -3,16 +3,7 @@ import { IMensageria } from "../../domain/event/iMensageria"
 import { ILogger } from "../../domain/contratos/iLogger"
 import { Observable, Subject } from 'rxjs'
 import { IEvento } from '../../domain/event/iPayload'
-
-export namespace NRabbitMQAdapter {
-  export interface IConfiguracao {
-    url: string
-    exchangeName: string
-    exchangeType: string,
-    queue: string
-    routingKeys: string
-  }
-}
+import { IRabbitMQConfiguracao } from './rabbitMQConfig'
 
 export default class RabbitMQAdapter implements IMensageria {
 
@@ -22,11 +13,11 @@ export default class RabbitMQAdapter implements IMensageria {
   private isConnecting: boolean = false
   private mensagemSubject = new Subject<IEvento>()
 
-  private constructor(private readonly mensageriaConfiguracao: NRabbitMQAdapter.IConfiguracao, private logger: ILogger) {
+  private constructor(private readonly mensageriaConfiguracao: IRabbitMQConfiguracao, private logger: ILogger) {
     if (!this.mensageriaConfiguracao.url) throw new Error('Erro ULR não informada.')
   }
 
-  public static getInstance(mensageriaConfiguracao: NRabbitMQAdapter.IConfiguracao, logger: ILogger): RabbitMQAdapter {
+  public static getInstance(mensageriaConfiguracao: IRabbitMQConfiguracao, logger: ILogger): RabbitMQAdapter {
     if (!RabbitMQAdapter.instance) {
       RabbitMQAdapter.instance = new RabbitMQAdapter(mensageriaConfiguracao, logger)
     }
