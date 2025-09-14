@@ -1,0 +1,12 @@
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h1 class="h2 mb-1">{{ titulo }}</h1>
+    <p class="text-muted">{{ subTitulo }}</p>
+  </div>
+  <div class="col-md-4 text-end">
+    <button *ngIf="exibirBotao" class="btn btn-warning backgroundColorPadrao" (click)="onClick()">
+      <i [class]="iconeBotao + ' me-2'" *ngIf="iconeBotao"></i>
+      {{ labelBotao }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="card h-100 stat-card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="card-title text-muted mb-0">{{ title }}</h6>
+      <i [class]="icon + ' text-muted'" *ngIf="icon" style="color: var(--app-primary) !important;"></i>
+    </div>
+    <h2 class="mb-1 stat-value">{{ value }}</h2>
+    <small class="text-muted" *ngIf="subtitle">{{ subtitle }}</small>
+  </div>
+</div>

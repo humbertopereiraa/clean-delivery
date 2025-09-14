@@ -22,12 +22,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public tituloAtual: string = "Dashboard"
   public sidebarCollapsed: boolean = false
   public isLogado: boolean = false
+
   private destroy$ = new Subject<void>()
 
   constructor(private authService: AuthService, private menuService: MenuService, private router: Router) { }
 
   ngOnInit(): void {
-    console.log('LayoutComponent')
     this.inicializarUsuario()
     this.escutarMudancasRota()
   }
@@ -53,7 +53,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
         this.itensMenu = this.menuService.obterMenu(usuario.role)
       }
       this.usuarioAtual = usuario
-      this.isLogado = this.usuarioAtual ? true : false
+      this.atualizarStatusLogin()
     })
   }
 
@@ -74,7 +74,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
       )
       .subscribe((event) => {
         this.atualizarTitulo(event.url);
+        this.atualizarStatusLogin()
       });
+  }
+
+  private atualizarStatusLogin(): void {
+    this.isLogado = !!this.usuarioAtual && this.router.url !== '/login';
   }
 
   private atualizarTitulo(url: string): void {

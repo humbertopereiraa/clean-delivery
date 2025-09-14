@@ -1,3 +1,14 @@
-<p>
-  dashboard works!
-</p>
+<div class="container-fluid">
+
+  <app-dashboard-header [titulo]="'Restaurante'" [subTitulo]="'Bem-vindo de volta, ' + usuarioAtual?.nome + '!'"
+    [labelBotao]="'Novo Pedido'" [iconeBotao]="'fas fa-plus'" [exibirBotao]="true" (eventoClick)="onClick()">
+  </app-dashboard-header>
+
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3" *ngFor="let card of statsCards">
+      <app-stat-card [title]="card.title" [value]="card.value" [icon]="card.icon" [trend]="card.trend">
+      </app-stat-card>
+    </div>
+  </div>
+
+</div>

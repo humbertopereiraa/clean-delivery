@@ -17,7 +17,8 @@
 
         <span class="sidebar-title text-white fw-bold ms-2" [class.d-none]="sidebarCollapsed">DeliveryApp</span> -->
         <img src="../../../assets/images/logo-motoboy.png" alt="Logo do App" class="img-fluid logo">
-        <span class="sidebar-title fw-bold ms-2" style="color: black;" [class.d-none]="sidebarCollapsed">Clean Delivery</span>
+        <span class="sidebar-title fw-bold ms-2" style="color: black;" [class.d-none]="sidebarCollapsed">Clean
+          Delivery</span>
       </div>
 
       <div class="sidebar-menu">
@@ -51,8 +52,9 @@
       </div>
 
       <!-- Botão de logout -->
-      <div class="sidebar-footer mt-auto p-3">
-        <button class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center"
+      <div class="mt-auto p-3">
+        <button
+          class="btn btn-warning btn-sm w-100 d-flex align-items-center justify-content-center backgroundColorPadrao"
           (click)="realizarLogout()" [title]="sidebarCollapsed ? 'Sair' : ''">
           <i class="fas fa-sign-out-alt"></i>
           <span class="ms-2" [class.d-none]="sidebarCollapsed">Sair</span>
@@ -65,24 +67,13 @@
       <!-- Navbar superior -->
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container-fluid">
-          <button class="btn btn-primary me-3" (click)="alternarSidebar()">
+          <button class="btn btn-warning me-3 backgroundColorPadrao" (click)="alternarSidebar()">
             <i class="fas fa-bars"></i>
           </button>
 
           <h4 class="mb-0">{{ tituloAtual }}</h4>
 
           <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
-            <!-- Notificações -->
-            <div class="nav-item me-3">
-              <button class="btn btn-outline-secondary position-relative">
-                <i class="fas fa-bell"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  3
-                  <span class="visually-hidden">notificações não lidas</span>
-                </span>
-              </button>
-            </div>
-
             <!-- Dropdown do usuário -->
             <div class="nav-item dropdown" *ngIf="usuarioAtual">
               <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" role="button"
