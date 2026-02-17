@@ -71,3 +71,7 @@ h5 {
   border: solid transparent;
   border-width: 1px 0;
 }
+
+.button-delete {
+  cursor: pointer;
+}

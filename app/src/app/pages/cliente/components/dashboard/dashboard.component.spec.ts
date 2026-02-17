@@ -63,40 +63,29 @@ describe("DashboardComponent", () => {
   })
 
   it("deve fechar popup ao criar pedido com sucesso", () => {
-    const alertSpy = vi.spyOn(global, "alert").mockImplementation(() => {})
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})
+    const alertSpy = vi.spyOn(global, "alert").mockImplementation(() => { })
 
     component.onPedidoCriado({ id: 1 })
 
-    expect(consoleSpy).toHaveBeenCalled()
     expect(alertSpy).toHaveBeenCalledWith("Pedido criado com sucesso!")
     expect(popupMock.fechar).toHaveBeenCalled()
 
     alertSpy.mockRestore()
-    consoleSpy.mockRestore()
   })
 
   it("deve exibir alerta ao ocorrer erro", () => {
-    const alertSpy = vi.spyOn(global, "alert").mockImplementation(() => {})
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+    const alertSpy = vi.spyOn(global, "alert").mockImplementation(() => { })
 
     component.onErro("Erro teste")
 
-    expect(consoleSpy).toHaveBeenCalled()
     expect(alertSpy).toHaveBeenCalledWith("Erro: Erro teste")
 
     alertSpy.mockRestore()
-    consoleSpy.mockRestore()
   })
 
   it("não deve quebrar ao fechar modal", () => {
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})
-
     component.onModalFechado()
-
-    expect(consoleSpy).toHaveBeenCalledWith("Modal fechado")
-
-    consoleSpy.mockRestore()
+    expect(component.popupAberto).toBe(false)
   })
 
   it("deve ter 4 statsCards definidos", () => {

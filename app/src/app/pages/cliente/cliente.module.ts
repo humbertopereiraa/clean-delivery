@@ -9,6 +9,7 @@ import { CadastroPedidoComponent } from './components/cadastro-pedido/cadastro-p
 import { PopupComponent } from '../../shared/components/popup/popup.component'
 import { ReactiveFormsModule } from '@angular/forms'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { NgWizardModule } from 'ng-wizard'
 
 @NgModule({
     declarations: [ClienteComponent, DashboardComponent, CadastroPedidoComponent],
@@ -19,7 +20,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
         DashboardHeaderComponent,
         StatCardComponent,
         PopupComponent,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgWizardModule,
     ],
     providers: [
         provideHttpClient(withInterceptorsFromDi())

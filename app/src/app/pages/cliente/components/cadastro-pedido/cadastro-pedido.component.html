@@ -1,265 +1,195 @@
 <form [formGroup]="pedidoForm" (ngSubmit)="criarPedido()">
-  <!-- Informações Básicas -->
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <label for="valorEntrega" class="form-label">Valor da Entrega *</label>
-      <div class="input-group">
-        <span class="input-group-text">R$</span>
-        <input 
-          type="number" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('valorEntrega')"
-          id="valorEntrega" 
-          formControlName="valorEntrega"
-          min="0"
-          step="0.01"
-          placeholder="0,00">
-      </div>
-      <div class="invalid-feedback">
-        {{ getFieldError('valorEntrega') }}
-      </div>
-    </div>
-    <div class="col-md-3">
-      <label for="status" class="form-label">Status</label>
-      <input 
-        type="text" 
-        class="form-control"
-        id="status" 
-        formControlName="status"
-        readonly>
-    </div>
-  </div>
 
-  <!-- Endereço de Entrega -->
-  <div formGroupName="enderecoEntrega">
-    <h5 class="mb-3">Endereço de Entrega</h5>
-    
-    <div class="row mb-3">
-      <div class="col-md-8">
-        <label for="rua" class="form-label">Rua *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('rua', enderecoEntrega)"
-          id="rua" 
-          formControlName="rua"
-          placeholder="Nome da rua">
-        <div class="invalid-feedback">
-          {{ getFieldError('rua', enderecoEntrega) }}
-        </div>
-      </div>
-      <div class="col-md-4">
-        <label for="numero" class="form-label">Número *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('numero', enderecoEntrega)"
-          id="numero" 
-          formControlName="numero"
-          placeholder="123">
-        <div class="invalid-feedback">
-          {{ getFieldError('numero', enderecoEntrega) }}
-        </div>
-      </div>
-    </div>
+  <ng-wizard>
 
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label for="bairro" class="form-label">Bairro *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('bairro', enderecoEntrega)"
-          id="bairro" 
-          formControlName="bairro"
-          placeholder="Nome do bairro">
-        <div class="invalid-feedback">
-          {{ getFieldError('bairro', enderecoEntrega) }}
+    <ng-wizard-step title="Itens do Pedido" [canExit]="validarEtapaItens.bind(this)">
+      <div formArrayName="itens" class="mt-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Itens do Pedido</h5>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="adicionarItem()">
+            <i class="bi bi-plus"></i> Adicionar Item
+          </button>
         </div>
-      </div>
-      <div class="col-md-4">
-        <label for="cidade" class="form-label">Cidade *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('cidade', enderecoEntrega)"
-          id="cidade" 
-          formControlName="cidade"
-          placeholder="Nome da cidade">
-        <div class="invalid-feedback">
-          {{ getFieldError('cidade', enderecoEntrega) }}
-        </div>
-      </div>
-      <div class="col-md-2">
-        <label for="estado" class="form-label">Estado *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('estado', enderecoEntrega)"
-          id="estado" 
-          formControlName="estado"
-          placeholder="SP"
-          maxlength="2"
-          (input)="formatarEstado($event)">
-        <div class="invalid-feedback">
-          {{ getFieldError('estado', enderecoEntrega) }}
-        </div>
-      </div>
-      <div class="col-md-2">
-        <label for="cep" class="form-label">CEP *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('cep', enderecoEntrega)"
-          id="cep" 
-          formControlName="cep"
-          placeholder="00000-000"
-          maxlength="9"
-          (input)="formatarCEP($event)">
-        <div class="invalid-feedback">
-          {{ getFieldError('cep', enderecoEntrega) }}
-        </div>
-      </div>
-    </div>
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label for="nomeDestinatario" class="form-label">Nome do Destinatário *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('nomeDestinatario', enderecoEntrega)"
-          id="nomeDestinatario" 
-          formControlName="nomeDestinatario"
-          placeholder="Nome completo">
-        <div class="invalid-feedback">
-          {{ getFieldError('nomeDestinatario', enderecoEntrega) }}
+        <div *ngFor="let item of itens.controls; let i = index" [formGroupName]="i" class="card mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-5">
+                <label [for]="'nome-' + i" class="form-label">Nome do Item *</label>
+                <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('nome', item)"
+                  [id]="'nome-' + i" formControlName="nome" placeholder="Nome do produto">
+                <div class="invalid-feedback">
+                  {{ getFieldError('nome', item) }}
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label [for]="'quantidade-' + i" class="form-label">Qtd *</label>
+                <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('quantidade', item)"
+                  [id]="'quantidade-' + i" formControlName="quantidade" min="1" placeholder="1">
+                <div class="invalid-feedback">
+                  {{ getFieldError('quantidade', item) }}
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label [for]="'preco-' + i" class="form-label">Preço *</label>
+                <div class="input-group">
+                  <span class="input-group-text">R$</span>
+                  <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('preco', item)"
+                    [id]="'preco-' + i" formControlName="preco" min="0" step="0.01" placeholder="0,00">
+                </div>
+                <div class="invalid-feedback">
+                  {{ getFieldError('preco', item) }}
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Total</label>
+                <div class="form-control-plaintext fw-bold">
+                  R$ {{ calcularTotalItem(i).toFixed(2).replace('.', ',') }}
+                </div>
+              </div>
+              <div class="col-md-1 d-flex align-items-end button-delete">
+                <button type="button" class="btn btn-outline-danger btn-sm" [disabled]="itens.length <= 1"
+                  (click)="removerItem(i)">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <label for="telefoneDestinatario" class="form-label">Telefone do Destinatário *</label>
-        <input 
-          type="text" 
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('telefoneDestinatario', enderecoEntrega)"
-          id="telefoneDestinatario" 
-          formControlName="telefoneDestinatario"
-          placeholder="(00) 00000-0000"
-          maxlength="15"
-          (input)="formatarTelefone($event)">
-        <div class="invalid-feedback">
-          {{ getFieldError('telefoneDestinatario', enderecoEntrega) }}
-        </div>
-      </div>
-    </div>
+    </ng-wizard-step>
 
-    <div class="row mb-3">
-      <div class="col-12">
-        <label for="complemento" class="form-label">Complemento</label>
-        <input 
-          type="text" 
-          class="form-control"
-          id="complemento" 
-          formControlName="complemento"
-          placeholder="Apartamento, bloco, etc. (opcional)">
-      </div>
-    </div>
-  </div>
+    <ng-wizard-step title="Endereço de Entrega" [canExit]="validarEtapaEndereco.bind(this)">
+      <div formGroupName="enderecoEntrega" class="mt-2">
+        <h5 class="mb-3">Endereço de Entrega</h5>
 
-  <!-- Itens do Pedido -->
-  <div formArrayName="itens">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="mb-0">Itens do Pedido</h5>
-      <button type="button" class="btn btn-outline-primary btn-sm" (click)="adicionarItem()">
-        <i class="bi bi-plus"></i> Adicionar Item
-      </button>
-    </div>
-
-    <div *ngFor="let item of itens.controls; let i = index" [formGroupName]="i" class="card mb-3">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-5">
-            <label [for]="'nome-' + i" class="form-label">Nome do Item *</label>
-            <input 
-              type="text" 
-              class="form-control"
-              [class.is-invalid]="isFieldInvalid('nome', item)"
-              [id]="'nome-' + i" 
-              formControlName="nome"
-              placeholder="Nome do produto">
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <label for="rua" class="form-label">Rua *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('rua', enderecoEntrega)" id="rua"
+              formControlName="rua" placeholder="Nome da rua">
             <div class="invalid-feedback">
-              {{ getFieldError('nome', item) }}
+              {{ getFieldError('rua', enderecoEntrega) }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label for="numero" class="form-label">Número *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('numero', enderecoEntrega)"
+              id="numero" formControlName="numero" placeholder="123">
+            <div class="invalid-feedback">
+              {{ getFieldError('numero', enderecoEntrega) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="bairro" class="form-label">Bairro *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('bairro', enderecoEntrega)"
+              id="bairro" formControlName="bairro" placeholder="Nome do bairro">
+            <div class="invalid-feedback">
+              {{ getFieldError('bairro', enderecoEntrega) }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label for="cidade" class="form-label">Cidade *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('cidade', enderecoEntrega)"
+              id="cidade" formControlName="cidade" placeholder="Nome da cidade">
+            <div class="invalid-feedback">
+              {{ getFieldError('cidade', enderecoEntrega) }}
             </div>
           </div>
           <div class="col-md-2">
-            <label [for]="'quantidade-' + i" class="form-label">Qtd *</label>
-            <input 
-              type="number" 
-              class="form-control"
-              [class.is-invalid]="isFieldInvalid('quantidade', item)"
-              [id]="'quantidade-' + i" 
-              formControlName="quantidade"
-              min="1"
-              placeholder="1">
+            <label for="estado" class="form-label">Estado *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('estado', enderecoEntrega)"
+              id="estado" formControlName="estado" placeholder="SP" maxlength="2" (input)="formatarEstado($event)">
             <div class="invalid-feedback">
-              {{ getFieldError('quantidade', item) }}
+              {{ getFieldError('estado', enderecoEntrega) }}
             </div>
           </div>
           <div class="col-md-2">
-            <label [for]="'preco-' + i" class="form-label">Preço *</label>
-            <div class="input-group">
-              <span class="input-group-text">R$</span>
-              <input 
-                type="number" 
-                class="form-control"
-                [class.is-invalid]="isFieldInvalid('preco', item)"
-                [id]="'preco-' + i" 
-                formControlName="preco"
-                min="0"
-                step="0.01"
-                placeholder="0,00">
-            </div>
+            <label for="cep" class="form-label">CEP *</label>
+            <input type="text" class="form-control" [class.is-invalid]="isFieldInvalid('cep', enderecoEntrega)" id="cep"
+              formControlName="cep" placeholder="00000-000" maxlength="9" (input)="formatarCEP($event)">
             <div class="invalid-feedback">
-              {{ getFieldError('preco', item) }}
+              {{ getFieldError('cep', enderecoEntrega) }}
             </div>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Total</label>
-            <div class="form-control-plaintext fw-bold">
-              R$ {{ calcularTotalItem(i).toFixed(2).replace('.', ',') }}
-            </div>
-          </div>
-          <div class="col-md-1 d-flex align-items-end">
-            <button 
-              type="button" 
-              class="btn btn-outline-danger btn-sm"
-              [disabled]="itens.length <= 1"
-              (click)="removerItem(i)">
-              <i class="bi bi-trash"></i>
-            </button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Resumo do Pedido -->
-  <div class="card bg-light">
-    <div class="card-body">
-      <h6 class="card-title">Resumo do Pedido</h6>
-      <div class="row">
-        <div class="col-md-4">
-          <strong>Subtotal: R$ {{ calcularSubtotal().toFixed(2).replace('.', ',') }}</strong>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="nomeDestinatario" class="form-label">Nome do Destinatário *</label>
+            <input type="text" class="form-control"
+              [class.is-invalid]="isFieldInvalid('nomeDestinatario', enderecoEntrega)" id="nomeDestinatario"
+              formControlName="nomeDestinatario" placeholder="Nome completo">
+            <div class="invalid-feedback">
+              {{ getFieldError('nomeDestinatario', enderecoEntrega) }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="telefoneDestinatario" class="form-label">Telefone do Destinatário *</label>
+            <input type="text" class="form-control"
+              [class.is-invalid]="isFieldInvalid('telefoneDestinatario', enderecoEntrega)" id="telefoneDestinatario"
+              formControlName="telefoneDestinatario" placeholder="(00) 00000-0000" maxlength="15"
+              (input)="formatarTelefone($event)">
+            <div class="invalid-feedback">
+              {{ getFieldError('telefoneDestinatario', enderecoEntrega) }}
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <strong>Entrega: R$ {{ (pedidoForm.get('valorEntrega')?.value || 0).toFixed(2).replace('.', ',') }}</strong>
-        </div>
-        <div class="col-md-4">
-          <strong class="text-primary">Total: R$ {{ calcularTotal().toFixed(2).replace('.', ',') }}</strong>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <label for="complemento" class="form-label">Complemento</label>
+            <input type="text" class="form-control" id="complemento" formControlName="complemento"
+              placeholder="Apartamento, bloco, etc. (opcional)">
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </ng-wizard-step>
+
+    <ng-wizard-step title="Informações Básicas" [canExit]="validarEtapaInfoBasicas.bind(this)">
+      <div class="row mb-4  mt-2">
+        <div class="col-md-6">
+          <label for="valorEntrega" class="form-label">Valor da Entrega *</label>
+          <div class="input-group">
+            <span class="input-group-text">R$</span>
+            <input type="number" class="form-control" [class.is-invalid]="isFieldInvalid('valorEntrega')"
+              id="valorEntrega" formControlName="valorEntrega" min="0" step="0.01" placeholder="0,00">
+          </div>
+          <div class="invalid-feedback">
+            {{ getFieldError('valorEntrega') }}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="status" class="form-label">Status</label>
+          <input type="text" class="form-control" id="status" formControlName="status" readonly>
+        </div>
+      </div>
+    </ng-wizard-step>
+
+    <ng-wizard-step title="Resumo do Pedido">
+      <div class="card bg-light mt-2">
+        <div class="card-body">
+          <h6 class="card-title">Resumo do Pedido</h6>
+          <div class="row">
+            <div class="col-md-4">
+              <strong>Subtotal: R$ {{ calcularSubtotal().toFixed(2).replace('.', ',') }}</strong>
+            </div>
+            <div class="col-md-4">
+              <strong>Entrega: R$ {{ (pedidoForm.get('valorEntrega')?.value || 0).toFixed(2).replace('.', ',')
+                }}</strong>
+            </div>
+            <div class="col-md-4">
+              <strong class="text-primary">Total: R$ {{ calcularTotal().toFixed(2).replace('.', ',') }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-wizard-step>
+
+  </ng-wizard>
 
   <!-- Loading indicator -->
   <div *ngIf="carregando" class="text-center mt-3">

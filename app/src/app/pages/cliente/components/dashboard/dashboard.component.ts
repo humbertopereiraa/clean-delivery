@@ -43,6 +43,8 @@ export class DashboardComponent implements OnInit {
     },
   ]
 
+  public popupAberto: boolean = false;
+
   constructor(private authService: AuthService) {
     this.usuarioAtual = this.authService.obterUsuarioAtual()
   }
@@ -50,7 +52,8 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   public onClick(): void {
-    this.popupPedido.abrir()
+    this.popupAberto = true;
+    this.popupPedido.abrir();
   }
 
   onBotaoClicado(botao: string) {
@@ -59,23 +62,22 @@ export class DashboardComponent implements OnInit {
         this.cadastroPedido.criarPedido()
         break
       case "cancelar":
-        this.popupPedido.fechar()
+        this.popupAberto = false;
+        this.popupPedido.fechar();
         break
     }
   }
 
   onPedidoCriado(pedido: any) {
-    console.log("Pedido criado com sucesso:", pedido)
     alert("Pedido criado com sucesso!")
     this.popupPedido.fechar()
   }
 
   onErro(erro: string) {
-    console.error("Erro:", erro)
     alert("Erro: " + erro)
   }
 
   onModalFechado() {
-    console.log("Modal fechado")
+    this.popupAberto = false;
   }
 }

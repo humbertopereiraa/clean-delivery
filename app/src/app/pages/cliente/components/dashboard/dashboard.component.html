@@ -17,7 +17,7 @@
   (botaoClicado)="onBotaoClicado($event)" (modalFechado)="onModalFechado()">
 
   <div>
-    <app-cadastro-pedido #cadastroPedido (pedidoCriado)="onPedidoCriado($event)" (erro)="onErro($event)">
+    <app-cadastro-pedido #cadastroPedido [resetForm]="popupAberto" (pedidoCriado)="onPedidoCriado($event)" (erro)="onErro($event)">
     </app-cadastro-pedido>
   </div>
 </app-popup>

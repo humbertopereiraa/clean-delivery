@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from "@angular/core"
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from "@angular/core"
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } from "@angular/forms"
+import { NgWizardModule, NgWizardService } from "ng-wizard"
 
 interface ItemPedido {
   nome: string
@@ -28,22 +29,31 @@ interface PedidoRequest {
 }
 
 @Component({
-    selector: "app-cadastro-pedido",
-    templateUrl: "./cadastro-pedido.component.html",
-    styleUrls: ["./cadastro-pedido.component.css"],
-    standalone: false
+  selector: "app-cadastro-pedido",
+  templateUrl: "./cadastro-pedido.component.html",
+  styleUrls: ["./cadastro-pedido.component.css"],
+  standalone: false,
 })
-export class CadastroPedidoComponent implements OnInit {
+export class CadastroPedidoComponent implements OnInit, OnChanges {
+  @Input() resetForm: boolean = false;
+
   @Output() pedidoCriado = new EventEmitter<any>()
   @Output() erro = new EventEmitter<string>()
 
   public pedidoForm!: FormGroup
   public carregando = false
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private readonly fb: FormBuilder, private readonly wizardService: NgWizardService) { }
 
   ngOnInit() {
     this.inicializarFormulario()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes?.['resetForm']?.currentValue) {
+      this.resetarFormulario();
+      this.wizardService.reset();
+    }
   }
 
   get enderecoEntrega() {
@@ -52,6 +62,28 @@ export class CadastroPedidoComponent implements OnInit {
 
   get itens() {
     return this.pedidoForm.get("itens") as FormArray
+  }
+
+  get infobasicas() {
+    return this.pedidoForm.get('valorEntrega') as FormGroup
+  }
+
+  public validarEtapaItens(): boolean {
+    const valid = this.itens.valid;
+    if (!valid) this.itens.markAllAsTouched();
+    return valid;
+  }
+
+  public validarEtapaEndereco(): boolean {
+    const valid = this.enderecoEntrega.valid;
+    if (!valid) this.enderecoEntrega.markAllAsTouched();
+    return valid;
+  }
+
+  public validarEtapaInfoBasicas(): boolean {
+    const valid = this.infobasicas.valid;
+    if (!valid) this.infobasicas.markAsTouched();
+    return valid;
   }
 
   public adicionarItem(): void {
@@ -114,31 +146,30 @@ export class CadastroPedidoComponent implements OnInit {
   }
 
   public async criarPedido(): Promise<void> {
-    if (this.pedidoForm.valid) {
-      this.carregando = true
+    if (!this.itens.valid || !this.enderecoEntrega.valid || !this.infobasicas.valid) {
+      return;
+    }
 
-      try {
-        const formValue = this.pedidoForm.getRawValue()
-        const pedidoData: PedidoRequest = {
-          clienteId: formValue.clienteId,
-          enderecoEntrega: formValue.enderecoEntrega,
-          itens: formValue.itens,
-          valorEntrega: formValue.valorEntrega,
-          status: "preparando",
-        }
+    this.carregando = true
 
-        // const response = await this.http.post("/api/pedidos", pedidoData).toPromise()
-
-        // this.pedidoCriado.emit(response)
-        this.resetarFormulario()
-      } catch (error: any) {
-        this.erro.emit(error.message || "Erro ao criar pedido")
-      } finally {
-        this.carregando = false
+    try {
+      const formValue = this.pedidoForm.getRawValue()
+      const pedidoData: PedidoRequest = {
+        clienteId: formValue.clienteId,
+        enderecoEntrega: formValue.enderecoEntrega,
+        itens: formValue.itens,
+        valorEntrega: formValue.valorEntrega,
+        status: "preparando",
       }
-    } else {
-      this.marcarCamposComoTocados()
-      this.erro.emit("Por favor, preencha todos os campos obrigatórios")
+
+      // const response = await this.http.post("/api/pedidos", pedidoData).toPromise()
+
+      // this.pedidoCriado.emit(response)
+      this.resetarFormulario()
+    } catch (error: any) {
+      this.erro.emit(error.message || "Erro ao criar pedido")
+    } finally {
+      this.carregando = false
     }
   }
 
@@ -168,7 +199,7 @@ export class CadastroPedidoComponent implements OnInit {
   private inicializarFormulario(): void {
     this.pedidoForm = this.fb.group({
       clienteId: ["", [Validators.required]],
-      valorEntrega: [0, [Validators.required, Validators.min(0)]],
+      valorEntrega: [null, [Validators.required, Validators.min(0)]],
       status: [{ value: "preparando", disabled: true }],
       enderecoEntrega: this.fb.group({
         rua: ["", [Validators.required]],
@@ -196,28 +227,5 @@ export class CadastroPedidoComponent implements OnInit {
   private resetarFormulario(): void {
     this.pedidoForm.reset()
     this.inicializarFormulario()
-  }
-
-  private marcarCamposComoTocados(): void {
-    Object.keys(this.pedidoForm.controls).forEach((key) => {
-      const control = this.pedidoForm.get(key)
-      if (control) {
-        control.markAsTouched()
-        if (control instanceof FormGroup) {
-          Object.keys(control.controls).forEach((subKey) => {
-            control.get(subKey)?.markAsTouched()
-          })
-        }
-        if (control instanceof FormArray) {
-          control.controls.forEach((arrayControl) => {
-            if (arrayControl instanceof FormGroup) {
-              Object.keys(arrayControl.controls).forEach((subKey) => {
-                arrayControl.get(subKey)?.markAsTouched()
-              })
-            }
-          })
-        }
-      }
-    })
   }
 }

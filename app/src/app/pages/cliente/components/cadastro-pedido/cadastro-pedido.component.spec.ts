@@ -85,16 +85,6 @@ describe("CadastroPedidoComponent", () => {
     expect(component.enderecoEntrega.get("estado")?.value).toBe("SP")
   })
 
-  it("deve emitir erro se formulário inválido ao criar pedido", async () => {
-    const erroSpy = vi.spyOn(component.erro, "emit")
-
-    await component.criarPedido()
-
-    expect(erroSpy).toHaveBeenCalledWith(
-      "Por favor, preencha todos os campos obrigatórios"
-    )
-  })
-
   it("deve criar pedido e resetar formulário quando válido", async () => {
     const erroSpy = vi.spyOn(component.erro, "emit")
 
