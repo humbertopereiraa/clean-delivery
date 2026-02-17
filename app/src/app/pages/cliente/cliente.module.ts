@@ -8,19 +8,21 @@ import { StatCardComponent } from '../../shared/components/stat-card/stat-card.c
 import { CadastroPedidoComponent } from './components/cadastro-pedido/cadastro-pedido.component'
 import { PopupComponent } from '../../shared/components/popup/popup.component'
 import { ReactiveFormsModule } from '@angular/forms'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ClienteRoutingModule,
-    DashboardHeaderComponent,
-    StatCardComponent,
-    PopupComponent,
-    ReactiveFormsModule,
-    HttpClientModule,
-  ],
-  declarations: [ClienteComponent, DashboardComponent, CadastroPedidoComponent],
-  exports: [DashboardComponent]
+    declarations: [ClienteComponent, DashboardComponent, CadastroPedidoComponent],
+    exports: [DashboardComponent],
+    imports: [
+        CommonModule,
+        ClienteRoutingModule,
+        DashboardHeaderComponent,
+        StatCardComponent,
+        PopupComponent,
+        ReactiveFormsModule
+    ],
+    providers: [
+        provideHttpClient(withInterceptorsFromDi())
+    ]
 })
 export class ClienteModule { }
