@@ -16,12 +16,12 @@ export class ClienteMenuService implements IMenu {
         icone: "fa-solid fa-gauge",
         rota: "/cliente/dashboard"
       },
-      {
-        id: "pedido",
-        titulo: "Pedido",
-        icone: "fas fa-cookie",
-        rota: "/cliente/pedido"
-      },
+      // {
+      //   id: "pedido",
+      //   titulo: "Pedido",
+      //   icone: "fas fa-cookie",
+      //   rota: "/cliente/pedido"
+      // },
     ]
   }
 }

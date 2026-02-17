@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { IUsuario } from '../../../../models/usuario.model'
 import { AuthService } from '../../../../core/services/auth.service'
+import { PopupComponent } from '../../../../shared/components/popup/popup.component'
+import { CadastroPedidoComponent } from '../cadastro-pedido/cadastro-pedido.component'
 
 @Component({
   selector: 'app-dashboard',
@@ -8,6 +10,9 @@ import { AuthService } from '../../../../core/services/auth.service'
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+
+  @ViewChild("popupPedido") popupPedido!: PopupComponent
+  @ViewChild("cadastroPedido") cadastroPedido!: CadastroPedidoComponent
 
   public usuarioAtual: IUsuario | null
   statsCards = [
@@ -44,6 +49,32 @@ export class DashboardComponent implements OnInit {
   ngOnInit() { }
 
   public onClick(): void {
+    this.popupPedido.abrir()
+  }
 
+  onBotaoClicado(botao: string) {
+    switch (botao) {
+      case "salvar":
+        this.cadastroPedido.criarPedido()
+        break
+      case "cancelar":
+        this.popupPedido.fechar()
+        break
+    }
+  }
+
+  onPedidoCriado(pedido: any) {
+    console.log("Pedido criado com sucesso:", pedido)
+    alert("Pedido criado com sucesso!")
+    this.popupPedido.fechar()
+  }
+
+  onErro(erro: string) {
+    console.error("Erro:", erro)
+    alert("Erro: " + erro)
+  }
+
+  onModalFechado() {
+    console.log("Modal fechado")
   }
 }

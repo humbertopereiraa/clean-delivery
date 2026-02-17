@@ -1,0 +1,23 @@
+<div class="modal fade" #modalElement tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" [ngClass]="{'modal-sm': tamanho === 'sm', 'modal-lg': tamanho === 'lg', 'modal-xl': tamanho === 'xl'}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">{{ titulo }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+      <div class="modal-footer">
+        <button 
+          *ngFor="let botao of botoes" 
+          type="button" 
+          class="btn"
+          [ngClass]="getBotaoClasse(botao)"
+          (click)="onBotaoClick(botao)">
+          {{ getBotaoTexto(botao) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

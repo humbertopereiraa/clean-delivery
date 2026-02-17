@@ -50,7 +50,6 @@ export class LoginComponent implements OnInit {
           this.authService.redirecionarParaDashboard()
         },
         error: (error) => {
-          console.error("Erro no login:", error)
           this.isLoading = false
         }
       })

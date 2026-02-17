@@ -12,3 +12,12 @@
   </div>
 
 </div>
+
+<app-popup #popupPedido [botoes]="['cancelar', 'salvar']" titulo="Cadastrar Novo Pedido" tamanho="xl"
+  (botaoClicado)="onBotaoClicado($event)" (modalFechado)="onModalFechado()">
+
+  <div>
+    <app-cadastro-pedido #cadastroPedido (pedidoCriado)="onPedidoCriado($event)" (erro)="onErro($event)">
+    </app-cadastro-pedido>
+  </div>
+</app-popup>
