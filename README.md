@@ -7,4 +7,5 @@ Plataforma de gestão de entregas desenvolvida com Node.js, TypeScript, Angular,
 
 🏗 Arquitetura Proposta
 
-<img width="1693" height="645" alt="image" src="https://github.com/user-attachments/assets/4f2b1c90-b8dc-47ec-a399-494611dac67c" />
+<img width="1695" height="652" alt="image" src="https://github.com/user-attachments/assets/b2357810-e700-4717-ab24-db03cb8d60df" />
+
