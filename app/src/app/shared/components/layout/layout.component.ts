@@ -9,11 +9,10 @@ import { IItemMenu } from '../../../core/models/menu.model'
 import { ETipoUsuario } from '../../../core/enums/tipo-usuario.enum'
 
 @Component({
-  selector: 'app-layout',
-  standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet],
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+    selector: 'app-layout',
+    imports: [CommonModule, RouterModule, RouterOutlet],
+    templateUrl: './layout.component.html',
+    styleUrls: ['./layout.component.css']
 })
 export class LayoutComponent implements OnInit, OnDestroy {
 

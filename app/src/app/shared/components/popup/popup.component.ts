@@ -4,11 +4,10 @@ import { Component, Input, Output, EventEmitter, ViewChild, type ElementRef, typ
 declare var bootstrap: any
 
 @Component({
-  selector: "app-popup",
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: "./popup.component.html",
-  styleUrls: ["./popup.component.css"],
+    selector: "app-popup",
+    imports: [CommonModule],
+    templateUrl: "./popup.component.html",
+    styleUrls: ["./popup.component.css"]
 })
 export class PopupComponent implements AfterViewInit {
   @Input() botoes: string[] = ["cancelar", "salvar"]

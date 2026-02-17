@@ -28,9 +28,10 @@ interface PedidoRequest {
 }
 
 @Component({
-  selector: "app-cadastro-pedido",
-  templateUrl: "./cadastro-pedido.component.html",
-  styleUrls: ["./cadastro-pedido.component.css"],
+    selector: "app-cadastro-pedido",
+    templateUrl: "./cadastro-pedido.component.html",
+    styleUrls: ["./cadastro-pedido.component.css"],
+    standalone: false
 })
 export class CadastroPedidoComponent implements OnInit {
   @Output() pedidoCriado = new EventEmitter<any>()

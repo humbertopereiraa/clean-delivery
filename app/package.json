@@ -12,25 +12,25 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^18.2.14",
-    "@angular/common": "^18.2.14",
-    "@angular/compiler": "^18.2.14",
-    "@angular/core": "^18.2.14",
-    "@angular/forms": "^18.2.14",
-    "@angular/platform-browser": "^18.2.14",
-    "@angular/platform-browser-dynamic": "^18.2.14",
-    "@angular/router": "^18.2.14",
+    "@angular/animations": "^19.2.18",
+    "@angular/common": "^19.2.18",
+    "@angular/compiler": "^19.2.18",
+    "@angular/core": "^19.2.18",
+    "@angular/forms": "^19.2.18",
+    "@angular/platform-browser": "^19.2.18",
+    "@angular/platform-browser-dynamic": "^19.2.18",
+    "@angular/router": "^19.2.18",
     "@fortawesome/fontawesome-free": "^7.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.3"
+    "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "^18.2.21",
-    "@angular/cli": "^18.2.21",
-    "@angular/compiler-cli": "^18.2.14",
+    "@angular/build": "^19.2.20",
+    "@angular/cli": "^19.2.20",
+    "@angular/compiler-cli": "^19.2.18",
     "@testing-library/angular": "^16.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@types/jest": "^30.0.0",
@@ -39,7 +39,7 @@
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.4.2",
+    "typescript": "~5.8.3",
     "vitest": "^4.0.18"
   }
 }
