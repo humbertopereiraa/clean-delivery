@@ -1,0 +1,122 @@
+version: "3.9"
+
+services:
+
+  app:
+    build: ./app
+    container_name: app
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - pedido-service
+    networks:
+      - public
+      - private
+
+  auth-migrate:
+    build: ./auth-service
+    command: node_modules/.bin/node-pg-migrate up -m dist/infra/database/migrations
+    restart: "no"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@auth-db:5432/authdb
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - private
+
+  auth-service:
+    build: ./auth-service
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - private
+    expose:
+      - "3000"
+
+  pedido-migrate:
+    build: ./pedido-service
+    command: node_modules/.bin/node-pg-migrate up -m dist/infra/database/migrations
+    restart: "no"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@pedido-db:5432/pedidodb
+    depends_on:
+      pedido-db:
+        condition: service_healthy
+    networks:
+      - private
+
+  pedido-service:
+    build: ./pedido-service
+    env_file:
+      - ./pedido-service/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - private
+    expose:
+      - "3001"
+
+  auth-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+    networks:
+      - private
+
+  pedido-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: pedidodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pedido-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+    networks:
+      - private
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - private
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    networks:
+      - private
+    expose:
+      - "5672"
+      - "15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  auth-db-data:
+  pedido-db-data:
+
+networks:
+  public:
+    driver: bridge
+  private:
+    driver: bridge
+    internal: true

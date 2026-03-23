@@ -1,0 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*
+
+# Ambientes e Dependências
+.env
+node_modules/
+
+#pasta
+dist
+
+# Logs e Relatórios
+*.log
+coverage/
+
+# IDEs
+.vscode/
