@@ -1,7 +1,7 @@
 import AuthService from "../../application/service/authService"
 import HTTP from "../../domain/abstracoes/aHttp"
 import EncrypterBcryptAdapter from "../../infra/crypto/encrypterBcryptAdapter"
-import { PostgresAdapter } from "../../infra/database/postgresAdapter"
+import { PostgresAdapter } from "../../infra/database/postgres/postgresAdapter"
 import WinstonLoggerAdapter from "../../infra/log/winstonLoggerAdapter"
 import { UsuarioRepository } from "../../infra/repositories/usuarioRepository"
 import { JwtTokenAdapter } from "../../infra/token/jwtTokenAdapter"
@@ -10,8 +10,8 @@ import { Configuracao } from "../../main/configuracao"
 import { AuthController } from "../controllers/authController"
 import { loginSchema } from "../schemas/login.schema"
 
-const conexao = PostgresAdapter.getInstance()
 const logger = new WinstonLoggerAdapter()
+const conexao = PostgresAdapter.getInstance(logger)
 const usuarioRepository = new UsuarioRepository(conexao, logger)
 const encrypter = new EncrypterBcryptAdapter()
 const token = new JwtTokenAdapter()

@@ -26,10 +26,11 @@ const Configuracao = {
   mensageria: {
     rabbitmq: {
       url: env.RABBITMQ_URL,
-      exchangeName: env.RABBITMQ_EXCHANGENAME,
-      exchangeType: env.RABBITMQ_EXCHANGETYPE,
+      exchangeName: env.RABBITMQ_EXCHANGE_NAME,
+      exchangeType: env.RABBITMQ_EXCHANGE_TYPE,
       queue: env.RABBITMQ_QUEUE,
-      routingKeys: env.RABBITMQ_ROUTING_KEY
+      routingKeys: env.RABBITMQ_ROUTING_KEY,
+      retries: parseInt(env.RABBITMQ_RETRIES_CONNECT),
     }
   }
 }

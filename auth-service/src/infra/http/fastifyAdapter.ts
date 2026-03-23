@@ -39,7 +39,7 @@ export class FastifyAdapter extends HttpServer {
   }
 
   async listen(porta: number): Promise<void> {
-    await this.app.listen({ port: porta })
+    await this.app.listen({ port: porta, host: process?.env?.HOST || '0.0.0.0' })
     console.log(`[Auth Service] Servidor rodando na porta ${porta}`)
   }
 

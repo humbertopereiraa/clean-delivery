@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/main/index.ts",
     "clean": "if exist dist rmdir /s /q dist",
-    "copy": "copy package.json dist && copy .env dist && copy Dockerfile dist",
+    "copy": "copy package*.json dist && copy .env dist && copy Dockerfile dist",
     "build": "npm run clean && tsc && npm run copy",
     "start": "node dist/main/index.js",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:create": "node-pg-migrate create -m src/infra/database/migrations",
     "test": "jest"
   },
   "keywords": [],
@@ -23,6 +26,7 @@
     "dotenv": "^16.5.0",
     "fastify": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
+    "node-pg-migrate": "^8.0.4",
     "pg-pool": "^3.9.6",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",

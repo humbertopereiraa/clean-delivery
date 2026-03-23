@@ -10,10 +10,11 @@ export interface IEnvConfig {
   DATABASE_MAX_POOL: string
 
   RABBITMQ_URL: string,
-  RABBITMQ_EXCHANGENAME: string,
-  RABBITMQ_EXCHANGETYPE: string,
+  RABBITMQ_EXCHANGE_NAME: string,
+  RABBITMQ_EXCHANGE_TYPE: string,
   RABBITMQ_QUEUE: string,
   RABBITMQ_ROUTING_KEY: string,
+  RABBITMQ_RETRIES_CONNECT: string,
 }
 
 export interface IValidatorEnv {

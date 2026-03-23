@@ -15,10 +15,11 @@ export default class ValidarEnv implements IValidatorEnv {
       DATABASE_MAX_POOL: z.string().default('10'),
 
       RABBITMQ_URL: z.string(),
-      RABBITMQ_EXCHANGENAME: z.string(),
-      RABBITMQ_EXCHANGETYPE: z.string(),
+      RABBITMQ_EXCHANGE_NAME: z.string(),
+      RABBITMQ_EXCHANGE_TYPE: z.string(),
       RABBITMQ_QUEUE: z.string(),
       RABBITMQ_ROUTING_KEY: z.string(),
+      RABBITMQ_RETRIES_CONNECT: z.string().default('5'),
     })
 
     const resultado = schema.safeParse(env)

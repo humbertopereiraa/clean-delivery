@@ -1,13 +1,14 @@
-import { IConexao } from "../../domain/contratos/iConexao"
+import { IConexao } from "../../../domain/contratos/iConexao"
 import { Pool } from 'pg'
-import { Configuracao } from "../../main/configuracao"
+import { Configuracao } from "../../../main/configuracao"
+import { ILogger } from "../../../domain/contratos/iLogger"
 
 export class PostgresAdapter implements IConexao {
 
   private readonly pg: Pool
   private static instance: IConexao | null = null
 
-  private constructor() {
+  private constructor(private readonly logger: ILogger) {
     this.pg = new Pool({
       connectionString: Configuracao.banco.stringConexao,
       max: Configuracao.banco.max_pool,
@@ -15,7 +16,10 @@ export class PostgresAdapter implements IConexao {
     })
 
     this.pg.on('error', (error: Error,) => {
-      // TODO: Logger.error('Erro inesperado no pool de conexões do PostgreSQL:', error);
+      this.logger.error(
+        'Erro inesperado no pool de conexões do PostgreSQL',
+        error
+      )
     })
   }
 
@@ -24,14 +28,14 @@ export class PostgresAdapter implements IConexao {
       const result = await this.pg.query(sql, parametros)
       return result
     } catch (error: any) {
-      //TODO: Logger.error('Erro ao executar a query no PostgreSQL:', error, { query, parameters });
+      this.logger.error('Erro ao executar query no PostgreSQL', { sql, parametros, error });
       throw error
     }
   }
 
-  public static getInstance() {
+  public static getInstance(logger: ILogger) {
     if (!PostgresAdapter.instance) {
-      PostgresAdapter.instance = new PostgresAdapter()
+      PostgresAdapter.instance = new PostgresAdapter(logger)
     }
     return PostgresAdapter.instance
   }
