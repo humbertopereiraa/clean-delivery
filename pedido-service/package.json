@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/main/index.ts",
     "clean": "if exist dist rmdir /s /q dist",
-    "copy": "copy package.json dist && copy .env dist && copy Dockerfile dist",
+    "copy": "copy package*.json dist && copy .env dist && copy Dockerfile dist",
     "build": "npm run clean && tsc && npm run copy",
     "start": "node dist/main/index.js",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:create": "node-pg-migrate create -m src/infra/database/migrations",
     "test": "jest"
   },
   "author": "Humberto Pereira",
@@ -20,6 +23,7 @@
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "knex": "^3.1.0",
+    "node-pg-migrate": "^8.0.4",
     "pg": "^8.16.0",
     "pg-connection-string": "^2.9.0",
     "redis": "^5.5.6",

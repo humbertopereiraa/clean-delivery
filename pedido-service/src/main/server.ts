@@ -29,6 +29,8 @@ export async function startServer() {
   const logger = new WinstonLoggerAdapter()
   const rabbitMQ = RabbitMQAdapter.getInstance(obterRabbitMQConfiguracao(), logger)
 
+  await rabbitMQ.conectar(Configuracao.mensageria.rabbitmq.retries)
+
   //Escutar eventos Mensageria
   const redisAdapter = await RedisAdapter.getInstance(Configuracao.banco_cache.url, logger)
   const fetchHttpClient = new FetchHttpClient()

@@ -6,6 +6,7 @@ export interface IRabbitMQConfiguracao {
   exchangeType: string,
   queue: string
   routingKeys: string
+  retries: number
 }
 
 export default function obterRabbitMQConfiguracao(): IRabbitMQConfiguracao {
@@ -16,5 +17,6 @@ export default function obterRabbitMQConfiguracao(): IRabbitMQConfiguracao {
     exchangeType: rabbitmq.exchangeType,
     queue: rabbitmq.queue,
     routingKeys: rabbitmq.routingKeys,
+    retries: rabbitmq.retries
   }
 }
