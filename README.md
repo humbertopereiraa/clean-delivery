@@ -192,9 +192,3 @@ Durante o desenvolvimento deste projeto foram explorados:
 ## 👨‍💻 Autor
 
 Desenvolvido por Humberto Pereira.
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
