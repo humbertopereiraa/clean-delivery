@@ -1,5 +1,6 @@
 import HttpServer from "../../domain/abstracoes/aHttp"
 import fastify, { FastifyInstance } from "fastify"
+import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import { StatusCode } from "../../utils/statusCode"
 import { IRouteDocumentation } from "../../domain/contratos/iRouteDocumentation"
@@ -47,8 +48,14 @@ export class FastifyAdapter extends HttpServer {
     await routeDocumentationEngine.registrar(this.app, routeDocumentantion)
   }
 
-  private async config(): Promise<void> {
-    this.app.register(helmet) // Middleware Helmet
+  private config(): void {
+    this.app.register(cors, {
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    })
+    this.app.register(helmet, {
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
   }
 
   private mapSchema(schema?: IRouteDocumentationSchema): any {

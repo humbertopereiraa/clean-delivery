@@ -8,13 +8,16 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - auth-service
-      - pedido-service
+      auth-service:
+        condition: service_healthy
+      pedido-service:
+        condition: service_healthy
     networks:
       - public
       - private
 
   auth-migrate:
+    image: clean-delivery-auth:local
     build: ./auth-service
     command: node_modules/.bin/node-pg-migrate up -m dist/infra/database/migrations
     restart: "no"
@@ -27,18 +30,50 @@ services:
       - private
 
   auth-service:
+    image: clean-delivery-auth:local
     build: ./auth-service
-    env_file:
-      - ./auth-service/.env
+    environment:
+      PRODUCTION: "false"
+      APP_NAME: AUTH SERVICE
+      HTTP_PORT: "3000"
+      JWT_SECRET: any_jwt_secret
+      JWT_EXPIRES_IN: 1d
+      BCRYPT_SALT: "10"
+      DATABASE_URL: postgres://postgres:postgres@auth-db:5432/authdb
+      DATABASE_MAX_POOL: "10"
+      RABBITMQ_URL: amqp://app:app@rabbitmq:5672/
+      RABBITMQ_EXCHANGE_NAME: events
+      RABBITMQ_EXCHANGE_TYPE: topic
+      RABBITMQ_QUEUE: auth.eventos
+      RABBITMQ_ROUTING_KEY: usuario.*
+      RABBITMQ_RETRIES_CONNECT: "5"
     depends_on:
+      auth-db:
+        condition: service_healthy
+      auth-migrate:
+        condition: service_completed_successfully
       rabbitmq:
         condition: service_healthy
     networks:
+      - public
       - private
-    expose:
-      - "3000"
+    ports:
+      - "3010:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/info').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
 
   pedido-migrate:
+    image: clean-delivery-pedido:local
     build: ./pedido-service
     command: node_modules/.bin/node-pg-migrate up -m dist/infra/database/migrations
     restart: "no"
@@ -51,16 +86,48 @@ services:
       - private
 
   pedido-service:
+    image: clean-delivery-pedido:local
     build: ./pedido-service
-    env_file:
-      - ./pedido-service/.env
+    environment:
+      PRODUCTION: "false"
+      APP_NAME: PEDIDO SERVICE
+      HTTP_PORT: "3001"
+      DATABASE_URL: postgres://postgres:postgres@pedido-db:5432/pedidodb
+      DATABASE_MAX_POOL: "10"
+      DATABASE_CACHE_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://app:app@rabbitmq:5672/
+      RABBITMQ_EXCHANGE_NAME: events
+      RABBITMQ_EXCHANGE_TYPE: topic
+      RABBITMQ_QUEUE: pedido.usuarios
+      RABBITMQ_ROUTING_KEY: usuario.*
+      RABBITMQ_RETRIES_CONNECT: "5"
+      AUTH_SERVICE_URL: http://auth-service:3000
     depends_on:
+      pedido-db:
+        condition: service_healthy
+      pedido-migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
+      - public
       - private
-    expose:
-      - "3001"
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/info').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
 
   auth-db:
     image: postgres:15-alpine
@@ -94,11 +161,19 @@ services:
 
   redis:
     image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - private
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app
     networks:
       - private
     expose:

@@ -40,7 +40,7 @@ export class ExpressAdapter extends HttpServer {
   }
 
   listen(porta: number): void {
-    this.app.listen(porta)
+    this.app.listen(porta, '0.0.0.0')
     console.log(`Servidor Express rodando na porta: ${porta}`)
   }
 

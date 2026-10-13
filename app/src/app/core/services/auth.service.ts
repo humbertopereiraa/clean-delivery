@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core'
 import { IUsuario } from '../../models/usuario.model'
-import { BehaviorSubject, Observable, of, switchMap, timer } from 'rxjs'
+import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs'
 import { ETipoUsuario } from '../enums/tipo-usuario.enum'
 import { Router } from '@angular/router'
+import { HttpClient } from '@angular/common/http'
+import { environment } from '../../../environments/environment'
 
 export interface ICredenciaisLogin {
   email: string
@@ -16,29 +18,14 @@ export interface IRespostaLogin {
   mensagem?: string
 }
 
-const usuariosMock: IUsuario[] = [
-  {
-    id: '3b880d0f-a498-4d1b-a731-1bbcf32fff75',
-    nome: "João Silva",
-    email: "cliente@email.com",
-    role: ETipoUsuario.CLIENTE,
-    cpf: '83458321560'
-  },
-  {
-    id: '07407f96-016d-43eb-b690-4e0ae4c9a40d',
-    nome: "Maria Santos",
-    email: "entregador@email.com",
-    role: ETipoUsuario.ENTREGADORES,
-    cpf: '76674967300'
-  },
-  {
-    id: '45b9bc25-2a19-4f94-8a09-38032f16a98f',
-    nome: "Admin Sistema",
-    email: "admin@email.com",
-    role: ETipoUsuario.ADMIN,
-    cpf: '91081667141'
-  },
-]
+interface IRespostaAuthApi {
+  id: string
+  nome: string
+  email: string
+  cpf: string
+  role: ETipoUsuario
+  token: string
+}
 
 @Injectable({
   providedIn: 'root'
@@ -54,38 +41,43 @@ export class AuthService {
   public isAutenticado$ = this.subjectAutenticado.asObservable()
   public usuarioAtual$ = this.subjectUsuarioAtual.asObservable()
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private http: HttpClient) {
     this.inicializarAutenticacao()
   }
 
-  public logar(credenciais: ICredenciaisLogin): Observable<IRespostaLogin> {// TODO: Intergrar com API Auth-service
-    return timer(1000).pipe( // simula atraso de 1 segundo
-      switchMap(() => {
-        const usuario = usuariosMock.find((u) => u.email === credenciais.email);
+  public logar(credenciais: ICredenciaisLogin): Observable<IRespostaLogin> {
+    const url = `${environment.apiAuthUrl}/login`
 
-        if (!(usuario && credenciais.password === "123456")) {
-          return of({
-            sucesso: false,
-            mensagem: "Email ou senha inválidos"
-          });
+    return this.http.post<IRespostaAuthApi>(url, {
+      email: credenciais.email,
+      senha: credenciais.password,
+    }).pipe(
+      map((resposta) => {
+        const usuario: IUsuario = {
+          id: resposta.id,
+          nome: resposta.nome,
+          email: resposta.email,
+          cpf: resposta.cpf,
+          role: resposta.role,
         }
 
-        const token = `mock-jwt-token-${usuario.id}-${Date.now()}`;
+        localStorage.setItem(this.CHAVE_TOKEN, resposta.token)
+        localStorage.setItem(this.CHAVE_USUARIO, JSON.stringify(usuario))
 
-        localStorage.setItem(this.CHAVE_TOKEN, token);
-        localStorage.setItem(this.CHAVE_USUARIO, JSON.stringify(usuario));
+        this.subjectUsuarioAtual.next(usuario)
+        this.subjectAutenticado.next(true)
 
-        this.subjectUsuarioAtual.next(usuario);
-        this.subjectAutenticado.next(true);
-
-        return of({
+        return {
           sucesso: true,
           usuario,
-          token,
-          mensagem: "Login realizado com sucesso!"
-        });
-      })
-    );
+          token: resposta.token,
+        }
+      }),
+      catchError((erro) => of({
+        sucesso: false,
+        mensagem: erro?.error?.erro || erro?.error?.message || 'Erro no login',
+      }))
+    )
   }
 
   public deslogar(): void {

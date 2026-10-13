@@ -8,7 +8,6 @@ import { StatCardComponent } from '../../shared/components/stat-card/stat-card.c
 import { CadastroPedidoComponent } from './components/cadastro-pedido/cadastro-pedido.component'
 import { PopupComponent } from '../../shared/components/popup/popup.component'
 import { ReactiveFormsModule } from '@angular/forms'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { NgWizardModule } from 'ng-wizard'
 
 @NgModule({
@@ -22,9 +21,6 @@ import { NgWizardModule } from 'ng-wizard'
         PopupComponent,
         ReactiveFormsModule,
         NgWizardModule,
-    ],
-    providers: [
-        provideHttpClient(withInterceptorsFromDi())
     ]
 })
 export class ClienteModule { }

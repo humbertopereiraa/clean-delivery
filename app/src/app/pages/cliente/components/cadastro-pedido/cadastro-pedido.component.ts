@@ -1,6 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChanges } from "@angular/core"
 import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } from "@angular/forms"
-import { NgWizardModule, NgWizardService } from "ng-wizard"
+import { NgWizardService } from "ng-wizard"
+import { PedidoService } from "../../../../shared/services/pedido.service"
+import { firstValueFrom } from "rxjs"
 
 interface ItemPedido {
   nome: string
@@ -43,7 +45,7 @@ export class CadastroPedidoComponent implements OnInit, OnChanges {
   public pedidoForm!: FormGroup
   public carregando = false
 
-  constructor(private readonly fb: FormBuilder, private readonly wizardService: NgWizardService) { }
+  constructor(private readonly fb: FormBuilder, private readonly wizardService: NgWizardService, private readonly pedidoService: PedidoService) { }
 
   ngOnInit() {
     this.inicializarFormulario()
@@ -147,13 +149,14 @@ export class CadastroPedidoComponent implements OnInit, OnChanges {
 
   public async criarPedido(): Promise<void> {
     if (!this.itens.valid || !this.enderecoEntrega.valid || !this.infobasicas.valid) {
-      return;
+      return
     }
 
     this.carregando = true
 
     try {
       const formValue = this.pedidoForm.getRawValue()
+
       const pedidoData: PedidoRequest = {
         clienteId: formValue.clienteId,
         enderecoEntrega: formValue.enderecoEntrega,
@@ -162,10 +165,11 @@ export class CadastroPedidoComponent implements OnInit, OnChanges {
         status: "preparando",
       }
 
-      // const response = await this.http.post("/api/pedidos", pedidoData).toPromise()
+      const response = await firstValueFrom(this.pedidoService.criarPedido(pedidoData))
 
-      // this.pedidoCriado.emit(response)
+      this.pedidoCriado.emit(response)
       this.resetarFormulario()
+
     } catch (error: any) {
       this.erro.emit(error.message || "Erro ao criar pedido")
     } finally {
